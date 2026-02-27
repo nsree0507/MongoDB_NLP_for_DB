@@ -150,6 +150,11 @@ def process_query(user_query: str):
         if not isinstance(result, list):
             result = list(result)
 
+        # Convert ObjectId to string
+        from bson import ObjectId
+        for doc in result:
+            if "_id" in doc:
+                doc["_id"] = str(doc["_id"])
         # -------------------------------------------------
         # 🔥 NEW LAYERS ADDED HERE
         # -------------------------------------------------
@@ -177,7 +182,8 @@ def process_query(user_query: str):
         }
 
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Error processing query: {str(e)}"
-        )
+        import traceback
+        print("===== ERROR START =====")
+        traceback.print_exc()
+        print("===== ERROR END =====")
+        raise e

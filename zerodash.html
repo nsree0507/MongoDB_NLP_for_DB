@@ -832,7 +832,7 @@ async function runQuery(){
 
   await animPipe();await delay(180);
 
-  let res,cfg2;
+  let res = [], cfg2;
   if(uploadResult){
     res=uploadResult.res;lastRes=res;
     const t=uploadResult.time||'12ms';
@@ -851,21 +851,64 @@ async function runQuery(){
     renderExpl(fakeExpl,res);
     log("s",`Executed in ${t} — ${res.length} records returned from file`);
   }else{
-    const cfg=getCfg(raw);res=cfg.filter();lastRes=res;
-    execTimes.push(parseInt(cfg.time));if(execTimes.length>10)execTimes.shift();
-    if(cfg.op.startsWith("find"))mc.find++;else mc.agg++;
-    document.getElementById("cop").textContent=cfg.op;
-    document.getElementById("csum").textContent=cfg.csum;
-    document.getElementById("cd").innerHTML=cfg.code;
-    document.getElementById("cb").classList.add("on");
-    document.getElementById("sd").textContent=res.length;
-    document.getElementById("sf").textContent=cfg.conf+'%';
-    document.getElementById("st").textContent=cfg.time;
-    document.getElementById("si").textContent=cfg.idx;
-    document.getElementById("sc").classList.add("on");
-    renderExpl(cfg,res);
-    log("s",`Executed in ${cfg.time} — ${res.length} documents returned`);
-  }
+    try {
+
+        const start = performance.now();
+
+        const response = await fetch(
+            `http://127.0.0.1:8000/query?user_query=${encodeURIComponent(raw)}`
+        );
+
+        const data = await response.json();
+
+        const end = performance.now();
+        const execTime = Math.round(end - start) + "ms";
+
+        res = data.result || [];
+        lastRes = res;
+
+        execTimes.push(parseInt(execTime));
+        if(execTimes.length>10) execTimes.shift();
+        mc.find++;
+
+        document.getElementById("cop").textContent =
+            data.mongo_query?.find || "query";
+
+        document.getElementById("csum").textContent =
+            data.summary || "Query executed";
+
+        document.getElementById("cd").innerHTML =
+            `<span class="fn">${JSON.stringify(data.mongo_query, null, 2)}</span>`;
+
+        document.getElementById("cb").classList.add("on");
+
+        document.getElementById("sd").textContent = res.length;
+        document.getElementById("sf").textContent = "95%";
+        document.getElementById("st").textContent = execTime;
+        document.getElementById("si").textContent = "MongoDB";
+
+        document.getElementById("sc").classList.add("on");
+
+        renderExpl({
+            q: raw,
+            qs: "Backend MongoDB query",
+            steps: [
+                {h:"Intent detected", d:`${data.intent}`},
+                {h:"Collection used", d:`${data.collection}`},
+                {h:"Query executed", d:`Returned ${res.length} documents.`}
+            ],
+            found:r=>`${r.length} records returned.`,
+            insights:r=>[{i:"🍃",t:`Collection: ${data.collection}`}]
+        }, res);
+
+        log("s",`Executed via backend — ${res.length} documents returned`);
+
+    } catch (error) {
+        console.error(error);
+        alert("Backend connection failed");
+        return;
+    }
+}
 
   document.getElementById("rc").textContent=res.length+" records";
   renderTable(res);
@@ -897,6 +940,32 @@ function showToast(msg){
 }
 
 document.getElementById("qi").addEventListener("keydown",e=>{if(e.key==="Enter")runQuery()});
+    async function sendQuery() {
+    const query = document.getElementById("queryInput").value;
+
+    if (!query) {
+        alert("Please enter a query");
+        return;
+    }
+
+    try {
+        const response = await fetch(`http://127.0.0.1:8000/query?user_query=${encodeURIComponent(query)}`);
+        const data = await response.json();
+
+        console.log(data);  // see full response in browser console
+
+        // Show result nicely
+        document.getElementById("resultBox").innerHTML = `
+            <h3>Status: ${data.status}</h3>
+            <p><strong>Collection:</strong> ${data.collection}</p>
+            <p><strong>Summary:</strong> ${data.summary}</p>
+            <pre>${JSON.stringify(data.result, null, 2)}</pre>
+        `;
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Error connecting to backend");
+    }
+}
 </script>
 </body>
 </html>

@@ -9,7 +9,8 @@ class MongoConnection:
         self.client = MongoClient(
             "mongodb+srv://nlp_user:1234@cluster0.nizgx7n.mongodb.net/?retryWrites=true&w=majority",
             tls=True,
-            tlsCAFile=certifi.where()
+            tlsCAFile=certifi.where(),
+            tlsAllowInvalidCertificates = False
         )
 
         self.db = self.client["nlp_database"]

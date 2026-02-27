@@ -7,7 +7,7 @@ class IntentModel:
         self.labels = ["average","count","find","group","join","search","sum","summary"]
 
         self.tokenizer = DistilBertTokenizerFast.from_pretrained("nlp/intent_model")
-        self.model = DistilBertForSequenceClassification.from_pretrained("nlp/intent_model")
+        self.model = DistilBertForSequenceClassification.from_pretrained("distilbert-base-uncased", num_labels=2)
 
     def predict(self, text):
 

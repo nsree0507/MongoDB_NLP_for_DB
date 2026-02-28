@@ -63,73 +63,79 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif}
 }
 
 /* TOPBAR */
-.topbar{height:54px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;flex-shrink:0;gap:12px}
-.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
-.logo-icon{width:32px;height:32px;background:linear-gradient(135deg,#00d4ff,#0096b7);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 2px 10px rgba(0,212,255,.3);flex-shrink:0}
-.logo-txt{font-size:18px;font-weight:800;color:#fff;letter-spacing:-.5px}
-.logo-txt span{color:#00d4ff}
-.tb-breadcrumb{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);background:var(--bg3);padding:5px 13px;border-radius:6px;border:1px solid var(--border);white-space:nowrap}
-.tb-breadcrumb .hl{color:var(--cyan)}
-.tb-right{display:flex;align-items:center;gap:9px;flex-shrink:0}
-.vbadge{background:var(--bg4);border:1px solid var(--border);color:var(--muted);padding:3px 9px;border-radius:5px;font-size:11px;font-family:'JetBrains Mono',monospace}
-.conn{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--green);font-weight:500}
-.dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.user-badge{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:5px 12px;cursor:pointer;transition:.2s;font-size:12px;font-weight:500}
-.user-badge:hover{border-color:var(--cyan);color:var(--cyan)}
-.user-avatar{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#00d4ff,#6366f1);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0}
+.topbar{height:60px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;flex-shrink:0;gap:16px;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.logo{display:flex;align-items:center;gap:12px;text-decoration:none;flex-shrink:0}
+.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,#00d4ff,#0096b7);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 4px 12px rgba(0,212,255,.25);flex-shrink:0}
+.logo-txt{font-size:19px;font-weight:800;color:#fff;letter-spacing:-.6px;background:linear-gradient(135deg,#fff,#e2e8f0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.logo-txt span{background:linear-gradient(135deg,#00d4ff,#0096b7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.tb-breadcrumb{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);background:var(--bg3);padding:6px 14px;border-radius:7px;border:1px solid var(--border);white-space:nowrap;flex:1;max-width:400px;text-align:center}
+.tb-breadcrumb .hl{color:var(--cyan);font-weight:600}
+.tb-right{display:flex;align-items:center;gap:14px;flex-shrink:0}
+.vbadge{background:var(--bg4);border:1px solid var(--border);color:var(--muted);padding:4px 10px;border-radius:6px;font-size:11px;font-family:'JetBrains Mono',monospace;font-weight:600}
+.conn{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--green);font-weight:600}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2.5s cubic-bezier(.4,.0,.6,1) infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.user-badge{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:10px;padding:6px 14px;cursor:pointer;transition:.25s;font-size:12px;font-weight:600;color:var(--text)}
+.user-badge:hover{background:rgba(0,212,255,.08);border-color:var(--cyan);color:var(--cyan)}
+.user-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#00d4ff,#6366f1);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;box-shadow:0 2px 8px rgba(0,212,255,.2)}
 
 /* LAYOUT */
 .layout{display:flex;flex:1;overflow:hidden}
 
 /* SIDEBAR */
-.sidebar{width:220px;background:var(--bg2);border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0;display:flex;flex-direction:column}
-.sb-sec{padding:14px 10px 6px}
-.sb-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--dim);text-transform:uppercase;margin-bottom:8px;padding:0 8px}
-.ni{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--muted);transition:.15s;margin-bottom:2px;font-weight:500}
-.ni:hover{background:var(--bg3);color:var(--text)}
-.ni.act{background:var(--cglow);color:var(--cyan);border:1px solid rgba(0,212,255,.15)}
-.ni-badge{margin-left:auto;background:var(--cyan);color:#000;font-size:10px;font-weight:800;padding:1px 7px;border-radius:10px}
-.ci{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:7px;cursor:pointer;font-size:12px;color:var(--muted);transition:.15s;font-weight:500}
-.ci:hover,.ci.act{background:var(--bg3);color:var(--text)}
-.cc{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim)}
-.op-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:0 10px 10px}
-.ob{padding:7px 4px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);cursor:pointer;transition:.15s;text-align:center;font-weight:500}
-.ob:hover{border-color:var(--cyan);color:var(--cyan)}
-.ob.act{background:var(--cglow);border-color:var(--cyan);color:var(--cyan)}
+.sidebar{width:240px;background:var(--bg2);border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0;display:flex;flex-direction:column;padding-bottom:20px}
+.sb-sec{padding:16px 12px 8px}
+.sb-sec:first-of-type{padding-top:16px}
+.sb-lbl{font-size:10px;font-weight:800;letter-spacing:.15em;color:var(--dim);text-transform:uppercase;margin-bottom:10px;padding:0 10px;opacity:.7}
+.ni{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;cursor:pointer;font-size:13px;color:var(--muted);transition:.2s;margin-bottom:4px;font-weight:500;border:1px solid transparent}
+.ni:hover{background:rgba(0,212,255,.08);color:var(--text);border-color:rgba(0,212,255,.15)}
+.ni.act{background:var(--cglow);color:var(--cyan);border:1px solid rgba(0,212,255,.25);box-shadow:0 0 12px rgba(0,212,255,.1)}
+.ni-badge{margin-left:auto;background:linear-gradient(135deg,#00d4ff,#0096b7);color:#000;font-size:10px;font-weight:800;padding:2px 8px;border-radius:11px;box-shadow:0 2px 6px rgba(0,212,255,.2)}
+.ci{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);padding:2px 6px}
+.cc{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px;color:var(--muted);transition:.2s;font-weight:500;border:1px solid transparent}
+.cc:hover,.cc.act{background:rgba(0,212,255,.08);color:var(--text);border-color:rgba(0,212,255,.15)}
+.cc.act{background:var(--cglow);color:var(--cyan);border-color:rgba(0,212,255,.25)}
+.sp-col{font-size:11px;color:var(--dim);margin-left:auto;font-family:'JetBrains Mono',monospace}
+.op-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 12px 12px}
+.ob{padding:8px 6px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);cursor:pointer;transition:.2s;text-align:center;font-weight:600;white-space:nowrap}
+.ob:hover{border-color:rgba(0,212,255,.3);color:var(--text);background:rgba(0,212,255,.06)}
+.ob.act{background:var(--cglow);border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 10px rgba(0,212,255,.1)}
 
 /* DATA SOURCE INDICATOR in sidebar */
-.ds-indicator{margin:10px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;flex-shrink:0}
-.ds-ttl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin-bottom:8px}
-.ds-item{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:12px;color:var(--muted)}
-.ds-item.active-src{color:var(--cyan)}
-.ds-icon{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:12px;background:var(--bg4);flex-shrink:0}
+.ds-indicator{margin:12px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 16px;flex-shrink:0}
+.ds-ttl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--dim);margin-bottom:10px;padding:0}
+.ds-list{display:flex;flex-direction:column;gap:6px}
+.ds-item{display:flex;align-items:center;gap:10px;padding:8px 10px;font-size:12px;color:var(--muted);border-radius:8px;cursor:pointer;transition:.2s;border:1px solid transparent;font-weight:500}
+.ds-item:hover{background:rgba(0,212,255,.06);color:var(--text);border-color:rgba(0,212,255,.15)}
+.ds-item.active-src{background:var(--cglow);color:var(--cyan);border-color:rgba(0,212,255,.25)}
+.ds-icon{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;background:var(--bg4);flex-shrink:0}
 .ds-icon.csv{background:rgba(16,185,129,.15);color:var(--green)}
 .ds-icon.pdf{background:rgba(239,68,68,.15);color:#f87171}
 .ds-icon.json{background:rgba(245,158,11,.15);color:var(--yellow)}
 .ds-icon.xls{background:rgba(16,185,129,.15);color:var(--green)}
 .ds-icon.txt{background:rgba(100,116,139,.15);color:var(--muted)}
 .ds-icon.db{background:rgba(0,212,255,.15);color:var(--cyan)}
-.ds-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px}
+.ds-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;font-weight:500}
 .ds-remove{color:var(--dim);cursor:pointer;font-size:14px;transition:.15s;flex-shrink:0}
-.ds-remove:hover{color:#ef4444}
+.ds-remove:hover{color:#ef4444;transform:scale(1.15)}
 
 /* MAIN */
-.main{flex:1;overflow-y:auto;display:flex;flex-direction:column}
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column;background:var(--bg)}
 
 /* ---- UPLOAD ZONE ---- */
-.upload-section{padding:16px 20px;border-bottom:1px solid var(--border);background:var(--bg2);flex-shrink:0}
-.upload-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.upload-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);display:flex;align-items:center;gap:7px}
-.upload-title .dot2{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 5px var(--cyan)}
-.drop-zone{border:1.5px dashed var(--border2);border-radius:12px;padding:20px 24px;text-align:center;cursor:pointer;transition:.25s;background:var(--bg3);position:relative;overflow:hidden}
-.drop-zone:hover,.drop-zone.drag-over{border-color:var(--cyan);background:var(--cglow);box-shadow:0 0 20px rgba(0,212,255,.06)}
-.dz-icon{font-size:28px;margin-bottom:8px;display:block}
-.dz-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
-.dz-sub{font-size:12px;color:var(--muted)}
-.dz-sub span{color:var(--cyan);font-weight:600;cursor:pointer}
-.dz-types{display:flex;gap:6px;justify-content:center;margin-top:10px;flex-wrap:wrap}
-.dz-type{background:var(--bg4);border:1px solid var(--border);color:var(--muted);padding:2px 9px;border-radius:4px;font-size:10px;font-family:'JetBrains Mono',monospace;font-weight:600}
+.upload-section{padding:24px 28px;border-bottom:1px solid var(--border);background:var(--bg);flex-shrink:0}
+.upload-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.upload-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--dim);display:flex;align-items:center;gap:8px}
+.upload-title .dot2{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 6px var(--cyan);animation:pulse 2s infinite}
+.drop-zone{border:2px dashed rgba(0,212,255,.25);border-radius:14px;padding:28px 32px;text-align:center;cursor:pointer;transition:.3s;background:rgba(0,212,255,.03);position:relative;overflow:hidden}
+.drop-zone::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(0,212,255,.05),transparent 70%);pointer-events:none}
+.drop-zone:hover,.drop-zone.drag-over{border-color:var(--cyan);background:rgba(0,212,255,.08);box-shadow:0 0 24px rgba(0,212,255,.08)}
+.dz-icon{font-size:32px;margin-bottom:10px;display:block}
+.dz-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px}
+.dz-sub{font-size:13px;color:var(--muted);line-height:1.5}
+.dz-sub span{color:var(--cyan);font-weight:700;cursor:pointer}
+.dz-types{display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+.dz-type{background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:3px 11px;border-radius:5px;font-size:11px;font-family:'JetBrains Mono',monospace;font-weight:600}
 .dz-type.csv{border-color:rgba(16,185,129,.3);color:var(--green)}
 .dz-type.pdf{border-color:rgba(239,68,68,.3);color:#f87171}
 .dz-type.json{border-color:rgba(245,158,11,.3);color:var(--yellow)}
@@ -138,155 +144,210 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif}
 #file-input{display:none}
 
 /* uploaded files strip */
-.uploaded-strip{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.ufile{display:flex;align-items:center;gap:7px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:12px;animation:pop-in .3s cubic-bezier(.34,1.56,.64,1) both;transition:.2s;cursor:default}
-.ufile.active-file{border-color:var(--cyan);background:var(--cglow)}
+.uploaded-strip{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.ufile{display:flex;align-items:center;gap:9px;background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:8px 14px;font-size:12px;animation:pop-in .3s cubic-bezier(.34,1.56,.64,1) both;transition:.2s;cursor:default}
+.ufile:hover{border-color:var(--border2)}
+.ufile.active-file{border-color:var(--cyan);background:var(--cglow);box-shadow:0 0 12px rgba(0,212,255,.1)}
 @keyframes pop-in{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
-.ufile-icon{font-size:14px}
-.ufile-name{color:var(--text);font-weight:500;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ufile-size{color:var(--muted);font-size:10px}
-.ufile-del{color:var(--dim);cursor:pointer;font-size:15px;transition:.15s;margin-left:2px}
-.ufile-del:hover{color:#ef4444}
-.ufile-active-badge{background:var(--cyan);color:#000;font-size:9px;font-weight:800;padding:1px 6px;border-radius:4px}
+.ufile-icon{font-size:15px}
+.ufile-name{color:var(--text);font-weight:600;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ufile-size{color:var(--muted);font-size:11px;opacity:.7}
+.ufile-del{color:var(--dim);cursor:pointer;font-size:16px;transition:.15s;margin-left:2px;padding:0 4px}
+.ufile-del:hover{color:#ef4444;transform:scale(1.2)}
+.ufile-active-badge{background:var(--cyan);color:#000;font-size:9px;font-weight:800;padding:2px 7px;border-radius:4px}
 
 /* parse progress */
-.parse-bar{height:2px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:8px;display:none}
+.parse-bar{height:3px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:10px;display:none}
 .parse-bar.show{display:block}
-.parse-fill{height:100%;background:linear-gradient(90deg,#00d4ff,#6366f1);border-radius:2px;width:0%;transition:width .3s ease}
+.parse-fill{height:100%;background:linear-gradient(90deg,#00d4ff,#6366f1,#f59e0b);border-radius:3px;width:0%;transition:width .3s ease}
 
 /* QUERY */
-.qs{padding:16px 20px;border-bottom:1px solid var(--border);background:var(--bg2);flex-shrink:0}
-.qmeta{font-size:10px;color:var(--dim);letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px;font-weight:700}
-.ctag{background:var(--cglow);border:1px solid rgba(0,212,255,.2);color:var(--cyan);padding:2px 10px;border-radius:5px;font-size:11px;display:flex;align-items:center;gap:5px;font-weight:600;text-transform:none;letter-spacing:0}
-.qrow{display:flex;gap:9px;align-items:center}
-.qi{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 16px;font-family:'Outfit',sans-serif;font-size:15px;color:var(--text);outline:none;transition:.25s;font-weight:400}
-.qi:focus{border-color:rgba(0,212,255,.5);box-shadow:0 0 0 3px rgba(0,212,255,.07)}
+.qs{padding:24px 28px;border-bottom:1px solid var(--border);background:var(--bg);flex-shrink:0}
+.qmeta{font-size:10px;color:var(--dim);letter-spacing:.12em;text-transform:uppercase;margin-bottom:13px;display:flex;align-items:center;gap:10px;font-weight:800}
+.ctag{background:var(--cglow);border:1px solid rgba(0,212,255,.25);color:var(--cyan);padding:3px 12px;border-radius:6px;font-size:12px;display:flex;align-items:center;gap:6px;font-weight:700;text-transform:none;letter-spacing:0}
+.qrow{display:flex;gap:11px;align-items:center}
+.qi{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:11px;padding:13px 18px;font-family:'Outfit',sans-serif;font-size:15px;color:var(--text);outline:none;transition:.3s;font-weight:400}
+.qi:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,212,255,.08)}
 .qi::placeholder{color:var(--dim)}
-.bcl{background:transparent;border:1px solid var(--border);color:var(--muted);padding:11px 15px;border-radius:9px;font-size:13px;cursor:pointer;transition:.15s;font-family:'Outfit',sans-serif}
-.bcl:hover{color:var(--text);border-color:var(--muted)}
-.brun{background:linear-gradient(135deg,#00d4ff,#0096b7);color:#000;border:none;padding:12px 22px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:7px;transition:.2s;white-space:nowrap;font-family:'Outfit',sans-serif}
-.brun:hover{box-shadow:0 6px 20px rgba(0,212,255,.35);transform:translateY(-1px)}
+.bcl{background:transparent;border:1px solid var(--border);color:var(--muted);padding:12px 17px;border-radius:10px;font-size:13px;cursor:pointer;transition:.25s;font-family:'Outfit',sans-serif;font-weight:600}
+.bcl:hover{color:var(--text);border-color:var(--cyan);background:rgba(0,212,255,.05)}
+.brun{background:linear-gradient(135deg,#00d4ff,#0096b7);color:#000;border:none;padding:12px 26px;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:7px;transition:.25s;white-space:nowrap;font-family:'Outfit',sans-serif;letter-spacing:.3px;box-shadow:0 4px 14px rgba(0,212,255,.25)}
+.brun:hover{box-shadow:0 8px 24px rgba(0,212,255,.4);transform:translateY(-2px)}
 .brun.ld{background:var(--bg4);color:var(--muted);cursor:not-allowed;transform:none;box-shadow:none}
-.chips{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
-.chip{background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:20px;font-size:12px;cursor:pointer;transition:.15s;font-weight:500}
-.chip:hover{border-color:var(--cyan);color:var(--cyan)}
+.chips{display:flex;gap:8px;margin-top:13px;flex-wrap:wrap}
+.chip{background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:6px 14px;border-radius:22px;font-size:12px;cursor:pointer;transition:.2s;font-weight:600;white-space:nowrap}
+.chip:hover{border-color:var(--cyan);color:var(--cyan);background:rgba(0,212,255,.05)}
 
 /* PIPELINE */
-.pipe{display:none;align-items:center;background:var(--bg2);border-bottom:1px solid var(--border);padding:0 20px;overflow-x:auto;flex-shrink:0}
+.pipe{display:none;align-items:center;background:var(--bg);border-bottom:1px solid var(--border);padding:0 28px;overflow-x:auto;flex-shrink:0}
 .pipe.on{display:flex}
-.ps{display:flex;flex-direction:column;align-items:center;padding:11px 16px;gap:4px;flex-shrink:0}
-.pi{font-size:16px}.pi.done{color:var(--cyan)}.pi.pend{color:var(--dim)}.pi.run{color:var(--yellow);animation:spin .6s linear infinite}
+.ps{display:flex;flex-direction:column;align-items:center;padding:13px 18px;gap:5px;flex-shrink:0}
+.pi{font-size:17px}.pi.done{color:var(--cyan)}.pi.pend{color:var(--dim)}.pi.run{color:var(--yellow);animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.pl{font-size:10px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.05em}
+.pl{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
 .pl.done{color:var(--cyan)}
-.psep{color:var(--dim);font-size:16px;flex-shrink:0}
+.psep{color:var(--dim);font-size:18px;flex-shrink:0;opacity:.6}
 
 /* CODE */
-.cb{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 20px 16px;display:none;flex-shrink:0}
+.cb{background:var(--bg);border-bottom:1px solid var(--border);padding:24px 28px;display:none;flex-shrink:0}
 .cb.on{display:block}
-.ch{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding-top:14px}
-.cop{background:var(--cglow);border:1px solid rgba(0,212,255,.25);color:var(--cyan);font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 11px;border-radius:5px}
-.csum{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
-.cbody{background:#050a10;border:1px solid var(--border);border-left:3px solid var(--cyan);border-radius:10px;padding:16px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.75;position:relative}
-.ccopy{position:absolute;top:10px;right:10px;background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;transition:.15s;font-family:'Outfit',sans-serif}
-.ccopy:hover{color:var(--text)}
+.ch{display:flex;align-items:center;gap:12px;margin-bottom:12px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.cop{background:var(--cglow);border:1px solid rgba(0,212,255,.3);color:var(--cyan);font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:800;padding:4px 12px;border-radius:6px;text-transform:uppercase;letter-spacing:.08em}
+.csum{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted)}
+.cbody{background:rgba(0,0,0,.3);border:1px solid var(--border);border-left:3px solid var(--cyan);border-radius:11px;padding:18px 20px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.8;position:relative;overflow-x:auto}
+.ccopy{position:absolute;top:12px;right:12px;background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:5px 11px;border-radius:7px;font-size:12px;cursor:pointer;transition:.2s;font-family:'Outfit',sans-serif;font-weight:600}
+.ccopy:hover{color:var(--text);border-color:var(--cyan)}
 .kw{color:var(--blue)}.fn{color:var(--cyan)}.str{color:var(--orange)}.op{color:var(--yellow)}.cm{color:var(--dim)}
 
 /* STATS */
-.sc{display:none;grid-template-columns:repeat(4,1fr);gap:12px;padding:16px 20px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0}
+.sc{display:none;grid-template-columns:repeat(4,1fr);gap:14px;padding:24px 28px;background:var(--bg);border-bottom:1px solid var(--border);flex-shrink:0}
 .sc.on{display:grid}
-.scard{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:16px 18px;transition:.2s}
-.scard:hover{border-color:var(--border2)}
-.slbl{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
-.sval{font-size:28px;font-weight:800;font-family:'JetBrains Mono',monospace;line-height:1}
+.scard{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px 20px;transition:.25s}
+.scard:hover{border-color:rgba(0,212,255,.3);box-shadow:0 0 12px rgba(0,212,255,.06)}
+.slbl{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:10px}
+.sval{font-size:32px;font-weight:900;font-family:'JetBrains Mono',monospace;line-height:1}
 .sval.c{color:var(--cyan)}.sval.g{color:var(--green)}.sval.y{color:var(--yellow)}.sval.p{color:var(--purple)}
-.ssub{font-size:11px;color:var(--dim);margin-top:5px}
+.ssub{font-size:12px;color:var(--muted);margin-top:6px;font-weight:500}
 
 /* EXPLANATION */
-.expl{padding:20px;border-bottom:1px solid var(--border);display:none;flex-shrink:0}
+.expl{padding:24px 28px;border-bottom:1px solid var(--border);display:none;flex-shrink:0;background:var(--bg)}
 .expl.on{display:block}
-.expl-hdr{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin-bottom:14px;display:flex;align-items:center;gap:7px}
-.eg{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.ehero{background:linear-gradient(135deg,rgba(0,212,255,.07),rgba(0,212,255,.02));border:1px solid rgba(0,212,255,.15);border-radius:12px;padding:18px 20px;grid-column:1/-1}
-.ehero-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--cyan);margin-bottom:6px}
-.ehero-q{font-size:17px;font-weight:700;color:var(--text);margin-bottom:5px}
-.ehero-sub{font-size:13px;color:var(--muted)}
-.esteps{background:var(--bg2);border:1px solid var(--border);border-radius:11px;padding:16px 18px}
-.esteps-ttl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin-bottom:12px}
-.estep{display:flex;gap:12px;margin-bottom:13px;position:relative}
-.estep:not(:last-child)::before{content:'';position:absolute;left:11px;top:26px;bottom:-5px;width:1px;background:var(--border)}
-.enum{width:24px;height:24px;border-radius:50%;background:var(--cglow);border:1px solid rgba(0,212,255,.3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--cyan);flex-shrink:0}
-.ebody{flex:1}.ehead{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px}.edesc{font-size:12px;color:var(--muted);line-height:1.6}
-.efound{background:var(--bg2);border:1px solid var(--border);border-radius:11px;padding:16px 18px}
-.efound-ttl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin-bottom:10px}
-.efound-txt{font-size:13px;color:var(--text);line-height:1.75}
-.hl{color:var(--cyan);font-weight:700}
-.ins{display:flex;align-items:flex-start;gap:8px;padding:9px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;margin-bottom:7px;font-size:12px;color:var(--text);line-height:1.55}
+.expl-hdr{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.eg{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.ehero{background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.2);border-radius:12px;padding:20px 22px;grid-column:1/-1}
+.ehero-lbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--cyan);margin-bottom:7px}
+.ehero-q{font-size:17px;font-weight:800;color:var(--text);margin-bottom:6px}
+.ehero-sub{font-size:13px;color:var(--muted);line-height:1.6}
+.esteps{background:var(--bg2);border:1px solid var(--border);border-radius:11px;padding:18px 20px}
+.esteps-ttl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:14px}
+.estep{display:flex;gap:13px;margin-bottom:15px;position:relative}
+.estep:not(:last-child)::before{content:'';position:absolute;left:11px;top:28px;bottom:-8px;width:1px;background:var(--border)}
+.enum{width:26px;height:26px;border-radius:50%;background:var(--cglow);border:1.5px solid rgba(0,212,255,.3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--cyan);flex-shrink:0}
+.ebody{flex:1}.ehead{font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px}.edesc{font-size:12px;color:var(--muted);line-height:1.7}
+.efound{background:var(--bg2);border:1px solid var(--border);border-radius:11px;padding:18px 20px}
+.efound-ttl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:11px}
+.efound-txt{font-size:13px;color:var(--text);line-height:1.8}
+.hl{color:var(--cyan);font-weight:800}
+.ins{display:flex;align-items:flex-start;gap:9px;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;font-size:12px;color:var(--text);line-height:1.6}
 .enext{grid-column:1/-1}
-.enext-ttl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin-bottom:10px}
-.ngrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.nbtn{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:10px 12px;font-size:12px;color:var(--muted);cursor:pointer;text-align:left;transition:.15s;font-family:'Outfit',sans-serif;display:flex;align-items:center;gap:7px;font-weight:500}
-.nbtn:hover{border-color:var(--cyan);color:var(--cyan);background:var(--cglow)}
+.enext-ttl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:12px}
+.ngrid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.nbtn{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:11px 13px;font-size:12px;color:var(--muted);cursor:pointer;text-align:left;transition:.2s;font-family:'Outfit',sans-serif;display:flex;align-items:center;gap:7px;font-weight:600}
+.nbtn:hover{border-color:rgba(0,212,255,.3);color:var(--cyan);background:rgba(0,212,255,.05)}
 
 /* RESULTS */
-.rs{padding:20px;display:none;flex-shrink:0}
+.rs{padding:24px 28px;display:none;flex-shrink:0}
 .rs.on{display:block}
-.rh{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.rt{font-size:14px;font-weight:700;display:flex;align-items:center;gap:10px}
-.rcnt{background:var(--bg3);border:1px solid var(--border);color:var(--muted);font-size:11px;padding:2px 10px;border-radius:10px;font-family:'JetBrains Mono',monospace}
-.expbtn{font-size:12px;color:var(--muted);cursor:pointer;transition:.15s;background:var(--bg3);border:1px solid var(--border);padding:6px 13px;border-radius:7px;font-weight:500}
-.expbtn:hover{color:var(--text);border-color:var(--cyan)}
-.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:16px}
-.tab{padding:9px 16px;font-size:13px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:.15s;display:flex;align-items:center;gap:5px;margin-bottom:-1px;font-weight:500}
+.rh{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.rt{font-size:15px;font-weight:700;display:flex;align-items:center;gap:11px;color:var(--text)}
+.rcnt{background:var(--bg3);border:1px solid var(--border);color:var(--muted);font-size:12px;padding:3px 12px;border-radius:11px;font-family:'JetBrains Mono',monospace;font-weight:600}
+.expbtn{font-size:13px;color:var(--muted);cursor:pointer;transition:.2s;background:var(--bg3);border:1px solid var(--border);padding:7px 15px;border-radius:8px;font-weight:600;font-family:'Outfit',sans-serif}
+.expbtn:hover{color:var(--text);border-color:var(--cyan);background:rgba(0,212,255,.05)}
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:18px;gap:0}
+.tab{padding:11px 18px;font-size:13px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:.2s;display:flex;align-items:center;gap:6px;margin-bottom:-1px;font-weight:600}
 .tab:hover{color:var(--text)}
 .tab.act{color:var(--cyan);border-bottom-color:var(--cyan)}
 .dtable{width:100%;border-collapse:collapse;font-size:12px}
-.dtable th{text-align:left;padding:9px 12px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--dim);border-bottom:1px solid var(--border);background:var(--bg3)}
-.dtable td{padding:10px 12px;border-bottom:1px solid rgba(31,45,66,.5);font-family:'JetBrains Mono',monospace;font-size:12px}
-.dtable tr:hover td{background:var(--bg3)}
-.tdept{display:inline-block;background:rgba(163,139,250,.1);border:1px solid rgba(163,139,250,.2);color:var(--purple);padding:1px 9px;border-radius:5px;font-size:11px}
-.tact{color:var(--green);font-size:11px}
-.tina{color:#f87171;font-size:11px}
-.tfile{display:inline-block;font-size:10px;padding:2px 7px;border-radius:4px;font-weight:700}
-.tfile.csv{background:rgba(16,185,129,.12);color:var(--green);border:1px solid rgba(16,185,129,.25)}
-.tfile.pdf{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.25)}
-.tfile.json{background:rgba(245,158,11,.12);color:var(--yellow);border:1px solid rgba(245,158,11,.25)}
-.tfile.xlsx{background:rgba(16,185,129,.12);color:var(--green);border:1px solid rgba(16,185,129,.25)}
+.dtable th{text-align:left;padding:11px 14px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);border-bottom:1px solid var(--border);background:transparent}
+.dtable td{padding:12px 14px;border-bottom:1px solid rgba(31,45,66,.6);font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text);cursor:pointer;transition:.15s}
+.dtable tr:hover td{background:rgba(0,212,255,.05)}
+.tdept{display:inline-block;background:rgba(163,139,250,.12);border:1px solid rgba(163,139,250,.25);color:var(--purple);padding:2px 10px;border-radius:6px;font-size:11px;font-weight:600}
+.tact{color:var(--green);font-size:11px;font-weight:600}
+.tina{color:#f87171;font-size:11px;font-weight:600}
+.tfile{display:inline-block;font-size:11px;padding:2px 8px;border-radius:5px;font-weight:700}
+.tfile.csv{background:rgba(16,185,129,.15);color:var(--green);border:1px solid rgba(16,185,129,.3)}
+.tfile.pdf{background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3)}
+.tfile.json{background:rgba(245,158,11,.15);color:var(--yellow);border:1px solid rgba(245,158,11,.3)}
+.tfile.xlsx{background:rgba(16,185,129,.15);color:var(--green);border:1px solid rgba(16,185,129,.3)}
 
 /* CHARTS */
-.cg{display:none;grid-template-columns:1fr 1fr;gap:14px;padding:0 20px 20px;flex-shrink:0}
+.cg{display:none;grid-template-columns:1fr 1fr;gap:16px;padding:0 28px 24px;flex-shrink:0}
 .cg.on{display:grid}
-.ccard{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px}
-.cttl{font-size:13px;font-weight:700;margin-bottom:4px}
-.csub{font-size:11px;color:var(--muted);margin-bottom:14px}
+.ccard{background:var(--bg2);border:1px solid var(--border);border-radius:13px;padding:20px;transition:.25s;overflow:hidden}
+.ccard:hover{border-color:rgba(0,212,255,.2);box-shadow:0 0 12px rgba(0,212,255,.05)}
+.cttl{font-size:14px;font-weight:800;margin-bottom:5px;color:var(--text)}
+.csub{font-size:12px;color:var(--muted);margin-bottom:16px;font-weight:500}
 canvas{display:block;max-width:100%}
 
 /* LOG */
-.lp{margin:0 20px 20px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;flex-shrink:0;display:none}
+.lp{margin:0 28px 24px;background:var(--bg2);border:1px solid var(--border);border-radius:13px;flex-shrink:0;display:none;overflow:hidden}
 .lp.on{display:block}
-.lh{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border)}
-.lt2{font-size:13px;font-weight:700}
-.live{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--green);font-weight:600}
-.lb{padding:10px 16px;font-family:'JetBrains Mono',monospace;font-size:11px;display:flex;flex-direction:column;gap:3px;max-height:120px;overflow-y:auto}
-.ll{display:flex;gap:10px}
-.ltm{color:var(--dim)}.li{color:var(--blue)}.ls{color:var(--cyan)}.lw{color:var(--yellow)}.lm{color:var(--muted)}
+.lh{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid var(--border)}
+.lt2{font-size:14px;font-weight:800;color:var(--text)}
+.live{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--green);font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.lb{padding:12px 18px;font-family:'JetBrains Mono',monospace;font-size:12px;display:flex;flex-direction:column;gap:4px;max-height:140px;overflow-y:auto;color:var(--text)}
+.ll{display:flex;gap:10px;align-items:center;}
+.ltm{color:var(--dim);min-width:50px}.li{color:var(--blue)}.ls{color:var(--cyan)}.lw{color:var(--yellow)}.lm{color:var(--muted)}
 
 /* EMPTY STATE */
-.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;text-align:center;color:var(--muted);gap:12px}
-.empty-icon{font-size:48px;opacity:.4}
-.empty-title{font-size:16px;font-weight:600;color:var(--text)}
-.empty-sub{font-size:13px;max-width:340px;line-height:1.6}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 28px;text-align:center;color:var(--muted);gap:14px}
+.empty-icon{font-size:52px;opacity:.35}
+.empty-title{font-size:17px;font-weight:700;color:var(--text)}
+.empty-sub{font-size:13px;max-width:360px;line-height:1.7;color:var(--muted)}
 
 /* Toast */
-.toast{position:fixed;top:16px;right:16px;z-index:999;background:var(--bg3);border:1px solid var(--cyan);color:#fff;padding:12px 18px;border-radius:11px;font-size:13px;display:flex;align-items:center;gap:10px;box-shadow:0 10px 30px rgba(0,0,0,.5);animation:toast-in .4s ease,toast-out .4s ease 2.8s both;pointer-events:none;font-weight:500}
+.toast{position:fixed;top:20px;right:20px;z-index:999;background:rgba(14,20,32,.95);border:1px solid var(--cyan);color:#fff;padding:14px 20px;border-radius:12px;font-size:13px;display:flex;align-items:center;gap:11px;box-shadow:0 12px 36px rgba(0,0,0,.6),0 0 20px rgba(0,212,255,.15);animation:toast-in .4s cubic-bezier(.34,1.56,.64,1),toast-out .4s ease 2.8s both;pointer-events:none;font-weight:600;backdrop-filter:blur(12px)}
 @keyframes toast-in{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:none}}
 @keyframes toast-out{from{opacity:1;transform:none}to{opacity:0;transform:translateX(30px)}}
 
 /* Scrollbar */
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:var(--bg2)}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;border:2px solid var(--bg)}
 ::-webkit-scrollbar-thumb:hover{background:var(--dim)}
+
+/* SECTION UTILITIES */
+.section-header{padding:28px 24px 20px;border-bottom:1px solid var(--border)}
+.section-header h2{font-size:22px;font-weight:700;color:var(--text);margin-bottom:6px;letter-spacing:-.3px}
+.section-header p{font-size:13px;color:var(--muted);line-height:1.5}
+.section-content{padding:24px;overflow-y:auto;flex:1}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:13px;padding:20px;margin-bottom:16px;transition:.25s}
+.card:last-child{margin-bottom:0}
+.card:hover{border-color:rgba(0,212,255,.2);box-shadow:0 0 12px rgba(0,212,255,.05)}
+
+/* TOGGLE SWITCH */
+.toggle-group{margin-bottom:18px}
+.toggle-label{display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:12px 0}
+.toggle-text{font-size:14px;font-weight:500;color:var(--text)}
+.toggle-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.toggle-switch{position:relative;width:48px;height:28px;background:var(--bg);border:1px solid var(--border);border-radius:14px;transition:.3s;cursor:pointer;display:flex;align-items:center;padding:2px}
+.toggle-switch.active{background:rgba(0,212,255,.15);border-color:rgba(0,212,255,.4)}
+.toggle-thumb{position:absolute;width:24px;height:24px;background:var(--border2);border-radius:12px;transition:.3s;left:2px;box-shadow:0 2px 4px rgba(0,0,0,.2)}
+.toggle-switch.active .toggle-thumb{left:22px;background:#00d4ff;box-shadow:0 2px 8px rgba(0,212,255,.4)}
+
+/* SETTINGS TITLE */
+.settings-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:14px;display:block}
+.settings-group{margin-bottom:24px}
+
+/* RANGE SLIDER */
+input[type="range"]{-webkit-appearance:none;appearance:none;width:100%;cursor:pointer}
+input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:#00d4ff;cursor:pointer;box-shadow:0 2px 6px rgba(0,212,255,.4);border:none}
+input[type="range"]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#00d4ff;cursor:pointer;box-shadow:0 2px 6px rgba(0,212,255,.4);border:none}
+input[type="range"]::-webkit-slider-runnable-track{background:linear-gradient(to right,var(--cyan) 0%,var(--cyan) var(--value),var(--border) var(--value),var(--border) 100%);height:6px;border-radius:3px;border:none}
+input[type="range"]::-moz-range-track{background:transparent;border:none}
+input[type="range"]::-moz-range-progress{background:var(--cyan);height:6px;border-radius:3px}
+
+/* OPERATION CARDS */
+.op-card{background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:14px 12px;cursor:pointer;transition:.25s;font-size:13px;font-weight:500;color:var(--text);text-align:center;display:flex;align-items:center;justify-content:center;min-height:44px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'JetBrains Mono',monospace}
+.op-card:hover{border-color:rgba(0,212,255,.5);background:rgba(0,212,255,.05);color:var(--cyan);box-shadow:0 4px 12px rgba(0,212,255,.1)}
+.op-card:active{transform:scale(.98)}
+
+/* OPERATION INFO MODAL */
+.op-modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:500;backdrop-filter:blur(8px)}
+.op-modal.show{display:flex;animation:fade-in .3s ease}
+.op-modal-content{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:32px;max-width:500px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.6);animation:slide-up .3s cubic-bezier(.34,1.56,.64,1)}
+.op-modal-title{font-size:20px;font-weight:700;color:var(--cyan);margin-bottom:12px;font-family:'JetBrains Mono',monospace;word-break:break-word}
+.op-modal-desc{font-size:15px;color:var(--text);line-height:1.7;margin-bottom:20px}
+.op-modal-close{position:absolute;top:16px;right:16px;font-size:24px;cursor:pointer;color:var(--muted);transition:.25s;background:none;border:none;padding:8px;border-radius:8px}
+.op-modal-close:hover{color:var(--text);background:rgba(0,212,255,.1)}
+.op-modal-action{display:flex;gap:12px}
+.op-btn{flex:1;padding:12px 16px;border:none;border-radius:10px;cursor:pointer;font-weight:600;transition:.25s;font-family:inherit}
+.op-btn-copy{background:rgba(0,212,255,.15);color:var(--cyan);border:1px solid rgba(0,212,255,.3)}
+.op-btn-copy:hover{background:rgba(0,212,255,.25);box-shadow:0 4px 12px rgba(0,212,255,.2)}
+.op-btn-close{background:var(--border);color:var(--muted)}
+.op-btn-close:hover{background:var(--border2);color:var(--text)}
+@keyframes slide-up{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
+@keyframes fade-in{from{opacity:0}to{opacity:1}}
 </style>
 </head>
 <body>
@@ -354,6 +415,7 @@ canvas{display:block;max-width:100%}
         <div class="ni act" data-section="query-generator" onclick="switchSection('query-generator', this)">⚡ Query Generator <span class="ni-badge">5</span></div>
         <div class="ni" data-section="aggregations" onclick="switchSection('aggregations', this)">📊 Aggregations</div>
         <div class="ni" data-section="collections" onclick="switchSection('collections', this)">📁 Collections</div>
+        <div class="ni" data-section="mongo-ops" onclick="switchSection('mongo-ops', this)">📚 MongoDB Ops</div>
         <div class="ni" data-section="query-history" onclick="switchSection('query-history', this)">🕐 Query History</div>
         <div class="ni" data-section="indexes" onclick="switchSection('indexes', this)">🔍 Indexes</div>
         <div class="ni" data-section="settings" onclick="switchSection('settings', this)">⚙️ Settings</div>
@@ -545,15 +607,16 @@ canvas{display:block;max-width:100%}
 
       <!-- QUERY HISTORY SECTION -->
       <div class="dashboard-section" id="section-query-history" style="display:none;flex-direction:column;flex:1;overflow-y:auto;padding:0">
-        <div style="padding:20px;border-bottom:1px solid var(--border)">
-          <h2 style="color:var(--text);font-size:18px;margin-bottom:16px">🕐 Query History</h2>
-          <p style="color:var(--muted);margin-bottom:12px">Recent queries executed in this session</p>
+        <div class="section-header">
+          <h2>🕐 Query History</h2>
+          <p>Recent queries executed in this session</p>
         </div>
-        <div style="padding:20px">
-          <div id="query-history-list" style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px">
-            <div style="color:var(--muted);text-align:center;padding:40px 20px">
-              <div style="font-size:32px;margin-bottom:8px">📭</div>
-              <div>No queries yet. Run a query to see it here.</div>
+        <div class="section-content">
+          <div id="query-history-list" class="card">
+            <div class="empty-state">
+              <div class="empty-icon">📭</div>
+              <div class="empty-title">No queries yet</div>
+              <div class="empty-sub">Run a query to see it here.</div>
             </div>
           </div>
         </div>
@@ -561,60 +624,377 @@ canvas{display:block;max-width:100%}
 
       <!-- INDEXES SECTION -->
       <div class="dashboard-section" id="section-indexes" style="display:none;flex-direction:column;flex:1;overflow-y:auto;padding:0">
-        <div style="padding:20px;border-bottom:1px solid var(--border)">
-          <h2 style="color:var(--text);font-size:18px;margin-bottom:16px">🔍 Indexes</h2>
-          <p style="color:var(--muted);margin-bottom:12px">View MongoDB indexes and performance metrics</p>
+        <div class="section-header">
+          <h2>🔍 Indexes</h2>
+          <p>View MongoDB indexes and performance metrics</p>
         </div>
-        <div style="padding:20px">
-          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:16px">
+        <div class="section-content">
+          <div class="card">
             <div style="color:var(--text);font-weight:600;margin-bottom:12px">📋 Active Indexes</div>
-            <table style="width:100%;font-size:12px;border-collapse:collapse">
-              <tr style="border-bottom:1px solid var(--border)">
-                <th style="text-align:left;padding:8px;color:var(--muted)">Collection</th>
-                <th style="text-align:left;padding:8px;color:var(--muted)">Index</th>
-                <th style="text-align:left;padding:8px;color:var(--muted)">Type</th>
-              </tr>
-              <tr style="border-bottom:1px solid var(--border)">
-                <td style="padding:8px;">employees</td>
-                <td style="padding:8px;color:var(--cyan)">_id</td>
-                <td style="padding:8px;">UNIQUE</td>
-              </tr>
-              <tr style="border-bottom:1px solid var(--border)">
-                <td style="padding:8px;">employees</td>
-                <td style="padding:8px;color:var(--cyan)">department</td>
-                <td style="padding:8px;">STANDARD</td>
+            <table class="dtable" style="font-size:12px">
+              <tr>
+                <th>Collection</th>
+                <th>Index</th>
+                <th>Type</th>
               </tr>
               <tr>
-                <td style="padding:8px;">employees</td>
-                <td style="padding:8px;color:var(--cyan)">hire_date</td>
-                <td style="padding:8px;">STANDARD</td>
+                <td>employees</td>
+                <td class="tdept" style="color:var(--cyan)">_id</td>
+                <td>UNIQUE</td>
+              </tr>
+              <tr>
+                <td>employees</td>
+                <td class="tdept" style="color:var(--cyan)">department</td>
+                <td>STANDARD</td>
+              </tr>
+              <tr>
+                <td>employees</td>
+                <td class="tdept" style="color:var(--cyan)">hire_date</td>
+                <td>STANDARD</td>
               </tr>
             </table>
           </div>
         </div>
       </div>
 
-      <!-- SETTINGS SECTION -->
-      <div class="dashboard-section" id="section-settings" style="display:none;flex-direction:column;flex:1;overflow-y:auto;padding:0">
-        <div style="padding:20px;border-bottom:1px solid var(--border)">
-          <h2 style="color:var(--text);font-size:18px;margin-bottom:16px">⚙️ Settings</h2>
-          <p style="color:var(--muted);margin-bottom:12px">Configure dashboard and connection preferences</p>
+      <!-- MONGODB OPERATIONS SECTION -->
+      <div class="dashboard-section" id="section-mongo-ops" style="display:none;flex-direction:column;flex:1;overflow-y:auto;padding:0">
+        <div class="section-header">
+          <h2>📚 MongoDB Operations Reference</h2>
+          <p>Complete guide to MongoDB operations with one-line descriptions</p>
         </div>
-        <div style="padding:20px">
-          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:16px">
-            <div style="color:var(--text);font-weight:600;margin-bottom:12px">🔗 Database Connection</div>
-            <div style="color:var(--muted);font-size:12px;margin-bottom:8px">
-              <div>Host: <span style="color:var(--cyan)">localhost:27017</span></div>
-              <div>Database: <span style="color:var(--cyan)">company_db</span></div>
-              <div>Status: <span style="color:var(--green)">● Connected</span></div>
+        <div class="section-content">
+          
+          <div class="card">
+            <span class="settings-title">🗄️ Database Operations</span>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <div class="op-card" onclick="showOpInfo('show dbs', 'List all databases on the MongoDB server')">show dbs</div>
+              <div class="op-card" onclick="showOpInfo('use dbName', 'Switch to specified database')">use &lt;dbName&gt;</div>
+              <div class="op-card" onclick="showOpInfo('db.dropDatabase()', 'Delete current database and all collections')">db.dropDatabase()</div>
+              <div class="op-card" onclick="showOpInfo('db.stats()', 'Return statistics about current database')">db.stats()</div>
+              <div class="op-card" onclick="showOpInfo('db.getName()', 'Get name of current database')">db.getName()</div>
+              <div class="op-card" onclick="showOpInfo('db.getMongo()', 'Get MongoDB connection object')">db.getMongo()</div>
             </div>
           </div>
-          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px">
-            <div style="color:var(--text);font-weight:600;margin-bottom:12px">🎨 Display Options</div>
-            <div style="color:var(--muted);font-size:12px">
-              <label style="display:block;margin-bottom:8px"><input type="checkbox" checked> Dark Mode</label>
-              <label style="display:block;margin-bottom:8px"><input type="checkbox" checked> Show Execution Log</label>
-              <label style="display:block"><input type="checkbox" checked> Auto-format Results</label>
+
+          <div class="card">
+            <span class="settings-title">📊 Collection Operations</span>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <div class="op-card" onclick="showOpInfo('show collections', 'List all collections in current database')">show collections</div>
+              <div class="op-card" onclick="showOpInfo('db.createCollection(name)', 'Create new collection with specified name')">db.createCollection()</div>
+              <div class="op-card" onclick="showOpInfo('db.collection.drop()', 'Delete collection and all its data')">db.collection.drop()</div>
+              <div class="op-card" onclick="showOpInfo('db.collection.renameCollection()', 'Rename collection to new name')">db.collection.renameCollection()</div>
+              <div class="op-card" onclick="showOpInfo('db.collection.stats()', 'Get statistics about collection (size, count, etc)')">db.collection.stats()</div>
+              <div class="op-card" onclick="showOpInfo('db.collection.validate()', 'Validate collection data integrity')">db.collection.validate()</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <span class="settings-title">✏️ INSERT Operations</span>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <div class="op-card" onclick="showOpInfo('insertOne()', 'Insert single document into collection')">insertOne()</div>
+              <div class="op-card" onclick="showOpInfo('insertMany()', 'Insert multiple documents in one operation')">insertMany()</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <span class="settings-title">🔍 FIND/READ Operations</span>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <div class="op-card" onclick="showOpInfo('find()', 'Return all documents matching query filter')">find()</div>
+              <div class="op-card" onclick="showOpInfo('findOne()', 'Return first document matching query filter')">findOne()</div>
+              <div class="op-card" onclick="showOpInfo('countDocuments()', 'Count number of documents matching filter')">countDocuments()</div>
+              <div class="op-card" onclick="showOpInfo('estimatedDocumentCount()', 'Fast count using metadata (approximate)')">estimatedDocumentCount()</div>
+              <div class="op-card" onclick="showOpInfo('distinct()', 'Get array of unique values for specified field')">distinct()</div>
+              <div class="op-card" onclick="showOpInfo('limit()', 'Restrict query results to N documents')">limit()</div>
+              <div class="op-card" onclick="showOpInfo('skip()', 'Skip first N documents from results')">skip()</div>
+              <div class="op-card" onclick="showOpInfo('sort()', 'Sort results by specified fields (1 asc, -1 desc)')">sort()</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <span class="settings-title">✏️ UPDATE Operations</span>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <div class="op-card" onclick="showOpInfo('updateOne()', 'Update first document matching filter')">updateOne()</div>
+              <div class="op-card" onclick="showOpInfo('updateMany()', 'Update all documents matching filter')">updateMany()</div>
+              <div class="op-card" onclick="showOpInfo('replaceOne()', 'Replace entire first matching document')">replaceOne()</div>
+              <div class="op-card" onclick="showOpInfo('findOneAndUpdate()', 'Update document and return modified version')">findOneAndUpdate()</div>
+              <div class="op-card" onclick="showOpInfo('$set', 'Set field values (only modifies specified fields)')">$set</div>
+              <div class="op-card" onclick="showOpInfo('$inc', 'Increment numeric field value')">$inc</div>
+              <div class="op-card" onclick="showOpInfo('$push', 'Add element to array field')">$push</div>
+              <div class="op-card" onclick="showOpInfo('$pull', 'Remove element(s) matching condition from array')">$pull</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <span class="settings-title">🗑️ DELETE Operations</span>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <div class="op-card" onclick="showOpInfo('deleteOne()', 'Delete first document matching filter')">deleteOne()</div>
+              <div class="op-card" onclick="showOpInfo('deleteMany()', 'Delete all documents matching filter')">deleteMany()</div>
+              <div class="op-card" onclick="showOpInfo('findOneAndDelete()', 'Delete document and return deleted version')">findOneAndDelete()</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <span class="settings-title">📈 AGGREGATION Pipeline Stages</span>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <div class="op-card" onclick="showOpInfo('$match', 'Filter documents matching condition (like WHERE in SQL)')">$match</div>
+              <div class="op-card" onclick="showOpInfo('$group', 'Group documents by field and compute aggregates')">$group</div>
+              <div class="op-card" onclick="showOpInfo('$project', 'Include/exclude fields and compute new fields')">$project</div>
+              <div class="op-card" onclick="showOpInfo('$sort', 'Sort documents by specified fields')">$sort</div>
+              <div class="op-card" onclick="showOpInfo('$limit', 'Limit output to N documents')">$limit</div>
+              <div class="op-card" onclick="showOpInfo('$skip', 'Skip first N documents from pipeline')">$skip</div>
+              <div class="op-card" onclick="showOpInfo('$lookup', 'Join documents from another collection (LEFT JOIN)')">$lookup</div>
+              <div class="op-card" onclick="showOpInfo('$unwind', 'Deconstruct array field into separate documents')">$unwind</div>
+              <div class="op-card" onclick="showOpInfo('$facet', 'Separate pipeline into multiple sub-pipelines')">$facet</div>
+              <div class="op-card" onclick="showOpInfo('$bucket', 'Group into buckets based on numeric ranges')">$bucket</div>
+              <div class="op-card" onclick="showOpInfo('$out', 'Write aggregation output to new collection')">$out</div>
+              <div class="op-card" onclick="showOpInfo('$addFields', 'Add new fields to documents')">$addFields</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <span class="settings-title">🔢 Comparison Operators</span>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <div class="op-card" onclick="showOpInfo('$eq', 'Match documents where field equals value')">$eq</div>
+              <div class="op-card" onclick="showOpInfo('$ne', 'Match documents where field NOT equals value')">$ne</div>
+              <div class="op-card" onclick="showOpInfo('$gt', 'Match documents where field greater than value')">$gt</div>
+              <div class="op-card" onclick="showOpInfo('$gte', 'Match documents where field >= value')">$gte</div>
+              <div class="op-card" onclick="showOpInfo('$lt', 'Match documents where field less than value')">$lt</div>
+              <div class="op-card" onclick="showOpInfo('$lte', 'Match documents where field <= value')">$lte</div>
+              <div class="op-card" onclick="showOpInfo('$in', 'Match documents where field is in array')">$in</div>
+              <div class="op-card" onclick="showOpInfo('$nin', 'Match documents where field NOT in array')">$nin</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <span class="settings-title">⚡ Logical Operators</span>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <div class="op-card" onclick="showOpInfo('$and', 'Match when ALL conditions are true')">$and</div>
+              <div class="op-card" onclick="showOpInfo('$or', 'Match when ANY condition is true')">$or</div>
+              <div class="op-card" onclick="showOpInfo('$not', 'Reverse truth value of condition')">$not</div>
+              <div class="op-card" onclick="showOpInfo('$nor', 'Match when NONE of conditions are true')">$nor</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <span class="settings-title">🔑 INDEX Operations</span>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <div class="op-card" onclick="showOpInfo('createIndex()', 'Create index on collection for faster queries')">createIndex()</div>
+              <div class="op-card" onclick="showOpInfo('getIndexes()', 'List all indexes on collection')">getIndexes()</div>
+              <div class="op-card" onclick="showOpInfo('dropIndex()', 'Delete specific index')">dropIndex()</div>
+              <div class="op-card" onclick="showOpInfo('dropIndexes()', 'Delete all indexes on collection')">dropIndexes()</div>
+              <div class="op-card" onclick="showOpInfo('reIndex()', 'Rebuild all indexes on collection')">reIndex()</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <span class="settings-title">⚙️ Advanced Operations</span>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <div class="op-card" onclick="showOpInfo('bulkWrite()', 'Execute multiple write operations in single call')">bulkWrite()</div>
+              <div class="op-card" onclick="showOpInfo('startSession()', 'Start multi-document transaction session')">startSession()</div>
+              <div class="op-card" onclick="showOpInfo('commit()', 'Commit changes in transaction')">commit()</div>
+              <div class="op-card" onclick="showOpInfo('abort()', 'Rollback changes in transaction')">abort()</div>
+              <div class="op-card" onclick="showOpInfo('watch()', 'Listen for real-time changes to collection')">watch()</div>
+              <div class="op-card" onclick="showOpInfo('explain()', 'Get query execution plan and statistics')">explain()</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- SETTINGS SECTION -->
+      <div class="dashboard-section" id="section-settings" style="display:none;flex-direction:column;flex:1;overflow-y:auto;padding:0">
+        <div class="section-header">
+          <h2>⚙️ Settings</h2>
+          <p>Configure dashboard and connection preferences</p>
+        </div>
+        <div class="section-content">
+          <div class="card">
+            <span class="settings-title">🔗 Database Connection</span>
+            <div style="color:var(--muted);font-size:13px;line-height:1.8">
+              <div style="margin-bottom:10px"><strong style="color:var(--text)">Host:</strong> <span style="color:var(--cyan)">localhost:27017</span></div>
+              <div style="margin-bottom:10px"><strong style="color:var(--text)">Database:</strong> <span style="color:var(--cyan)">company_db</span></div>
+              <div><strong style="color:var(--text)">Status:</strong> <span style="color:var(--green)">● Connected</span></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <span class="settings-title">🎨 Theme & Display</span>
+            <div class="settings-group">
+              <div class="toggle-label" onclick="toggleTheme(event)">
+                <div>
+                  <div class="toggle-text">☀️ Dark Mode</div>
+                  <div class="toggle-sub">Switch between light and dark themes</div>
+                </div>
+                <div class="toggle-switch active" id="theme-toggle">
+                  <div class="toggle-thumb"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-group">
+              <label class="toggle-text" style="display:block;margin-bottom:6px">📊 Table Density</label>
+              <select id="table-density" onchange="changeTableDensity(this.value)" style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:inherit;cursor:pointer;transition:.25s">
+                <option value="compact">Compact</option>
+                <option value="normal" selected>Normal</option>
+                <option value="spacious">Spacious</option>
+              </select>
+              <div class="toggle-sub" style="margin-top:4px">Adjust table row spacing</div>
+            </div>
+
+            <div class="settings-group">
+              <label class="toggle-text" style="display:block;margin-bottom:6px">📄 Results Per Page</label>
+              <select id="results-per-page" onchange="changeResultsPerPage(this.value)" style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:inherit;cursor:pointer;transition:.25s">
+                <option value="10">10</option>
+                <option value="25" selected>25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>
+              <div class="toggle-sub" style="margin-top:4px">Records displayed per page</div>
+            </div>
+
+            <div class="settings-group">
+              <div class="toggle-label" onclick="toggleExecutionLog(event)">
+                <div>
+                  <div class="toggle-text">📋 Show Execution Log</div>
+                  <div class="toggle-sub">Display query execution details</div>
+                </div>
+                <div class="toggle-switch active" id="log-toggle">
+                  <div class="toggle-thumb"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="toggle-label" onclick="toggleAutoFormat(event)">
+              <div>
+                <div class="toggle-text">📄 Auto-format Results</div>
+                <div class="toggle-sub">Automatically format JSON and results</div>
+              </div>
+              <div class="toggle-switch active" id="format-toggle">
+                <div class="toggle-thumb"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <span class="settings-title">⚙️ Query Settings</span>
+            
+            <div class="settings-group">
+              <label class="toggle-text" style="display:block;margin-bottom:8px">⏱️ Query Timeout (seconds)</label>
+              <div style="display:flex;align-items:center;gap:12px">
+                <input type="range" id="query-timeout" min="5" max="120" value="30" onchange="updateQueryTimeout(this.value)" style="flex:1;cursor:pointer;height:6px;border-radius:3px;background:var(--border);outline:none;-webkit-appearance:none;appearance:none">
+                <span id="timeout-value" style="color:var(--cyan);font-weight:600;min-width:50px;text-align:right">30s</span>
+              </div>
+              <div class="toggle-sub" style="margin-top:6px">Maximum query execution time</div>
+            </div>
+
+            <div class="settings-group">
+              <label class="toggle-text" style="display:block;margin-bottom:8px">📊 Max Results Limit</label>
+              <select id="max-results" onchange="updateMaxResults(this.value)" style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:inherit;cursor:pointer;transition:.25s">
+                <option value="100">100</option>
+                <option value="500">500</option>
+                <option value="1000">1,000</option>
+                <option value="5000" selected>5,000</option>
+                <option value="10000">10,000</option>
+                <option value="50000">50,000</option>
+              </select>
+              <div class="toggle-sub" style="margin-top:4px">Maximum records per query</div>
+            </div>
+
+            <div class="settings-group">
+              <div class="toggle-label" onclick="toggleQuerySuggestions(event)">
+                <div>
+                  <div class="toggle-text">💡 Query Suggestions</div>
+                  <div class="toggle-sub">Show AI-powered query recommendations</div>
+                </div>
+                <div class="toggle-switch active" id="suggestions-toggle">
+                  <div class="toggle-thumb"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="toggle-label" onclick="toggleRawQuery(event)">
+              <div>
+                <div class="toggle-text">🔍 Show Raw MongoDB Query</div>
+                <div class="toggle-sub">Display the generated aggregation pipeline</div>
+              </div>
+              <div class="toggle-switch" id="raw-query-toggle">
+                <div class="toggle-thumb"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <span class="settings-title">📋 Data Format Settings</span>
+            
+            <div class="settings-group">
+              <label class="toggle-text" style="display:block;margin-bottom:8px">🔢 Decimal Places</label>
+              <select id="decimal-places" onchange="updateDecimalPlaces(this.value)" style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:inherit;cursor:pointer;transition:.25s">
+                <option value="2" selected>2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="6">6</option>
+              </select>
+              <div class="toggle-sub" style="margin-top:4px">Precision for numeric values</div>
+            </div>
+
+            <div class="settings-group">
+              <label class="toggle-text" style="display:block;margin-bottom:8px">📅 Date Format</label>
+              <select id="date-format" onchange="updateDateFormat(this.value)" style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:inherit;cursor:pointer;transition:.25s">
+                <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                <option value="DD/MM/YYYY" selected>DD/MM/YYYY</option>
+                <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                <option value="MMM DD, YYYY">MMM DD, YYYY</option>
+              </select>
+              <div class="toggle-sub" style="margin-top:4px">How dates are displayed in results</div>
+            </div>
+
+            <div class="settings-group">
+              <label class="toggle-text" style="display:block;margin-bottom:8px">🌍 Timezone</label>
+              <select id="timezone" onchange="updateTimezone(this.value)" style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:inherit;cursor:pointer;transition:.25s">
+                <option value="UTC" selected>UTC</option>
+                <option value="EST">EST (US Eastern)</option>
+                <option value="CST">CST (US Central)</option>
+                <option value="PST">PST (US Pacific)</option>
+                <option value="IST">IST (India)</option>
+              </select>
+              <div class="toggle-sub" style="margin-top:4px">Timezone for timestamp conversion</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <span class="settings-title">💾 Export & Caching</span>
+            
+            <div class="settings-group">
+              <label class="toggle-text" style="display:block;margin-bottom:8px">📤 Default Export Format</label>
+              <select id="export-format" onchange="updateExportFormat(this.value)" style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:inherit;cursor:pointer;transition:.25s">
+                <option value="json" selected>JSON</option>
+                <option value="csv">CSV</option>
+                <option value="xlsx">Excel (XLSX)</option>
+              </select>
+              <div class="toggle-sub" style="margin-top:4px">Format for data export</div>
+            </div>
+
+            <div class="settings-group">
+              <div class="toggle-label" onclick="toggleQueryCache(event)">
+                <div>
+                  <div class="toggle-text">⚡ Enable Query Cache</div>
+                  <div class="toggle-sub">Cache recent query results for faster access</div>
+                </div>
+                <div class="toggle-switch active" id="cache-toggle">
+                  <div class="toggle-thumb"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="toggle-label" onclick="toggleNotifications(event)">
+              <div>
+                <div class="toggle-text">🔔 Query Notifications</div>
+                <div class="toggle-sub">Alert when queries complete</div>
+              </div>
+              <div class="toggle-switch active" id="notifications-toggle">
+                <div class="toggle-thumb"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -625,6 +1005,282 @@ canvas{display:block;max-width:100%}
 </div>
 
 <script>
+/* ============================================================ SETTINGS & THEME ============================================================ */
+let isDarkMode = true;
+let showExecutionLog = true;
+let autoFormatResults = true;
+let queryTimeout = 30;
+let maxResults = 5000;
+let tableDensity = 'normal';
+let resultsPerPage = 25;
+let decimalPlaces = 2;
+let dateFormat = 'DD/MM/YYYY';
+let timezone = 'UTC';
+let exportFormat = 'json';
+let queryCache = true;
+let querySuggestions = true;
+let rawQuery = false;
+let showNotifications = true;
+
+function toggleTheme(event) {
+  event.stopPropagation();
+  isDarkMode = !isDarkMode;
+  const toggle = document.getElementById('theme-toggle');
+  
+  if (isDarkMode) {
+    toggle.classList.add('active');
+    document.documentElement.style.setProperty('--bg', '#0a0f1a');
+    document.documentElement.style.setProperty('--bg2', '#0d1424');
+    document.documentElement.style.setProperty('--text', '#e8eaf0');
+    document.documentElement.style.setProperty('--muted', '#8a90a6');
+    document.documentElement.style.setProperty('--border', 'rgba(255,255,255,.08)');
+    localStorage.setItem('theme', 'dark');
+  } else {
+    toggle.classList.remove('active');
+    document.documentElement.style.setProperty('--bg', '#ffffff');
+    document.documentElement.style.setProperty('--bg2', '#f8fafc');
+    document.documentElement.style.setProperty('--text', '#1a1f35');
+    document.documentElement.style.setProperty('--muted', '#6b7280');
+    document.documentElement.style.setProperty('--border', 'rgba(0,0,0,.08)');
+    localStorage.setItem('theme', 'light');
+  }
+  log('s', isDarkMode ? 'Dark mode enabled' : 'Light mode enabled');
+}
+
+function toggleExecutionLog(event) {
+  event.stopPropagation();
+  showExecutionLog = !showExecutionLog;
+  const toggle = document.getElementById('log-toggle');
+  
+  if (showExecutionLog) {
+    toggle.classList.add('active');
+    document.getElementById('exec-log-section').style.display = 'block';
+    localStorage.setItem('showExecutionLog', 'true');
+    log('s', 'Execution log enabled');
+  } else {
+    toggle.classList.remove('active');
+    document.getElementById('exec-log-section').style.display = 'none';
+    localStorage.setItem('showExecutionLog', 'false');
+    log('s', 'Execution log disabled');
+  }
+}
+
+function toggleAutoFormat(event) {
+  event.stopPropagation();
+  autoFormatResults = !autoFormatResults;
+  const toggle = document.getElementById('format-toggle');
+  
+  if (autoFormatResults) {
+    toggle.classList.add('active');
+    localStorage.setItem('autoFormatResults', 'true');
+    log('s', 'Auto-format results enabled');
+  } else {
+    toggle.classList.remove('active');
+    localStorage.setItem('autoFormatResults', 'false');
+    log('s', 'Auto-format results disabled');
+  }
+}
+
+// Load settings on page load
+function loadSettings() {
+  const savedTheme = localStorage.getItem('theme') || 'dark';
+  isDarkMode = savedTheme === 'dark';
+  showExecutionLog = localStorage.getItem('showExecutionLog') !== 'false';
+  autoFormatResults = localStorage.getItem('autoFormatResults') !== 'false';
+  
+  // Load query settings
+  const queryTimeout = localStorage.getItem('queryTimeout') || '30';
+  const maxResults = localStorage.getItem('maxResults') || '5000';
+  const tableDensity = localStorage.getItem('tableDensity') || 'normal';
+  const resultsPerPage = localStorage.getItem('resultsPerPage') || '25';
+  const decimalPlaces = localStorage.getItem('decimalPlaces') || '2';
+  const dateFormat = localStorage.getItem('dateFormat') || 'DD/MM/YYYY';
+  const timezone = localStorage.getItem('timezone') || 'UTC';
+  const exportFormat = localStorage.getItem('exportFormat') || 'json';
+  const queryCache = localStorage.getItem('queryCache') !== 'false';
+  const querySuggestions = localStorage.getItem('querySuggestions') !== 'false';
+  const rawQuery = localStorage.getItem('rawQuery') !== 'true';
+  const notifications = localStorage.getItem('notifications') !== 'false';
+  
+  // Apply all settings to UI
+  const themeToggle = document.getElementById('theme-toggle');
+  if (isDarkMode && themeToggle) {
+    themeToggle.classList.add('active');
+  } else if (!isDarkMode && themeToggle) {
+    themeToggle.classList.remove('active');
+  }
+  
+  const logToggle = document.getElementById('log-toggle');
+  if (showExecutionLog && logToggle) {
+    logToggle.classList.add('active');
+  }
+  
+  const formatToggle = document.getElementById('format-toggle');
+  if (autoFormatResults && formatToggle) {
+    formatToggle.classList.add('active');
+  }
+  
+  const suggestionsToggle = document.getElementById('suggestions-toggle');
+  if (querySuggestions && suggestionsToggle) {
+    suggestionsToggle.classList.add('active');
+  }
+  
+  const rawQueryToggle = document.getElementById('raw-query-toggle');
+  if (rawQuery && rawQueryToggle) {
+    rawQueryToggle.classList.add('active');
+  }
+  
+  const cacheToggle = document.getElementById('cache-toggle');
+  if (queryCache && cacheToggle) {
+    cacheToggle.classList.add('active');
+  }
+  
+  const notificationsToggle = document.getElementById('notifications-toggle');
+  if (notifications && notificationsToggle) {
+    notificationsToggle.classList.add('active');
+  }
+  
+  // Set select values
+  const td = document.getElementById('table-density');
+  if (td) td.value = tableDensity;
+  
+  const rpp = document.getElementById('results-per-page');
+  if (rpp) rpp.value = resultsPerPage;
+  
+  const qt = document.getElementById('query-timeout');
+  if (qt) {
+    qt.value = queryTimeout;
+    const tv = document.getElementById('timeout-value');
+    if (tv) tv.textContent = queryTimeout + 's';
+  }
+  
+  const mr = document.getElementById('max-results');
+  if (mr) mr.value = maxResults;
+  
+  const dp = document.getElementById('decimal-places');
+  if (dp) dp.value = decimalPlaces;
+  
+  const df = document.getElementById('date-format');
+  if (df) df.value = dateFormat;
+  
+  const tz = document.getElementById('timezone');
+  if (tz) tz.value = timezone;
+  
+  const ef = document.getElementById('export-format');
+  if (ef) ef.value = exportFormat;
+}
+
+// Query Settings Functions
+function updateQueryTimeout(value) {
+  localStorage.setItem('queryTimeout', value);
+  const tv = document.getElementById('timeout-value');
+  if (tv) tv.textContent = value + 's';
+  log('s', 'Query timeout changed to ' + value + ' seconds');
+}
+
+function updateMaxResults(value) {
+  localStorage.setItem('maxResults', value);
+  log('s', 'Max results limit changed to ' + value.toLocaleString());
+}
+
+function toggleQuerySuggestions(event) {
+  event.stopPropagation();
+  const querySuggestions = localStorage.getItem('querySuggestions') !== 'false';
+  const newValue = !querySuggestions;
+  localStorage.setItem('querySuggestions', newValue);
+  
+  const toggle = document.getElementById('suggestions-toggle');
+  if (newValue) {
+    toggle.classList.add('active');
+    log('s', 'Query suggestions enabled');
+  } else {
+    toggle.classList.remove('active');
+    log('s', 'Query suggestions disabled');
+  }
+}
+
+function toggleRawQuery(event) {
+  event.stopPropagation();
+  const rawQuery = localStorage.getItem('rawQuery') === 'true';
+  const newValue = !rawQuery;
+  localStorage.setItem('rawQuery', newValue);
+  
+  const toggle = document.getElementById('raw-query-toggle');
+  if (newValue) {
+    toggle.classList.add('active');
+    log('s', 'Raw query display enabled');
+  } else {
+    toggle.classList.remove('active');
+    log('s', 'Raw query display disabled');
+  }
+}
+
+// Display Settings Functions
+function changeTableDensity(value) {
+  localStorage.setItem('tableDensity', value);
+  log('s', 'Table density changed to ' + value);
+}
+
+function changeResultsPerPage(value) {
+  localStorage.setItem('resultsPerPage', value);
+  log('s', 'Results per page changed to ' + value);
+}
+
+// Data Format Functions
+function updateDecimalPlaces(value) {
+  localStorage.setItem('decimalPlaces', value);
+  log('s', 'Decimal places set to ' + value);
+}
+
+function updateDateFormat(value) {
+  localStorage.setItem('dateFormat', value);
+  log('s', 'Date format changed to ' + value);
+}
+
+function updateTimezone(value) {
+  localStorage.setItem('timezone', value);
+  log('s', 'Timezone changed to ' + value);
+}
+
+// Export Settings Functions
+function updateExportFormat(value) {
+  localStorage.setItem('exportFormat', value);
+  log('s', 'Default export format set to ' + value.toUpperCase());
+}
+
+function toggleQueryCache(event) {
+  event.stopPropagation();
+  const queryCache = localStorage.getItem('queryCache') !== 'false';
+  const newValue = !queryCache;
+  localStorage.setItem('queryCache', newValue);
+  
+  const toggle = document.getElementById('cache-toggle');
+  if (newValue) {
+    toggle.classList.add('active');
+    log('s', 'Query cache enabled');
+  } else {
+    toggle.classList.remove('active');
+    log('s', 'Query cache disabled');
+  }
+}
+
+function toggleNotifications(event) {
+  event.stopPropagation();
+  const notifications = localStorage.getItem('notifications') !== 'false';
+  const newValue = !notifications;
+  localStorage.setItem('notifications', newValue);
+  
+  const toggle = document.getElementById('notifications-toggle');
+  if (newValue) {
+    toggle.classList.add('active');
+    log('s', 'Query notifications enabled');
+  } else {
+    toggle.classList.remove('active');
+    log('s', 'Query notifications disabled');
+  }
+}
+
+
 /* ============================================================ DASHBOARD NAVIGATION ============================================================ */
 let queryHistoryList = [];
 
@@ -697,6 +1353,9 @@ function updateQueryHistoryDisplay() {
 }
 
 function initializeDashboard() {
+  // Load user settings
+  loadSettings();
+  
   // Set default active section on dashboard load
   const queryGenButton = document.querySelector('[data-section="query-generator"]');
   if (queryGenButton) {
@@ -1145,10 +1804,31 @@ function renderExpl(cfg,r){
   const sh=cfg.steps.map(s=>`<div class="estep"><div class="enum">✓</div><div class="ebody"><div class="ehead">${s.h}</div><div class="edesc">${s.d}</div></div></div>`).join("");
   const ih=(cfg.insights?cfg.insights(r):[]).map(i=>`<div class="ins"><span style="flex-shrink:0;font-size:14px">${i.i}</span><span>${i.t}</span></div>`).join("");
   const nh=(cfg.next||[]).map(q=>`<button class="nbtn" onclick="sq('${q}');runQuery()">→ ${q}</button>`).join("");
+
+  // build MongoDB query explanation block if available
+  let mqHtml = '';
+  if(cfg.mongo_query){
+    const qObj = cfg.mongo_query;
+    const qStr = typeof qObj === 'string' ? qObj : JSON.stringify(qObj, null, 2);
+    mqHtml = `
+      <div class="emq">
+        <div class="emq-ttl">🔍 MongoDB Query (what runs under the hood)</div>
+        <pre style="background:var(--bg3);padding:12px;border-radius:8px;border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:12px;white-space:pre-wrap">${qStr.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre>
+        <div style="color:var(--muted);font-size:11px;line-height:1.6;">
+          <strong>Filter</strong> specifies which documents match your question. Additional clauses like
+          <strong>sort</strong>, <strong>limit</strong> or <strong>projection</strong> tell MongoDB how many
+          documents to return, in what order, and which fields to show. A query that uses an index
+          will run much faster because MongoDB can jump directly to matching records instead of scanning everything.
+        </div>
+      </div>
+    `;
+  }
+
   document.getElementById("eg").innerHTML=`
     <div class="ehero"><div class="ehero-lbl">🙋 What You Asked</div><div class="ehero-q">${cfg.q||'Custom Query'}</div><div class="ehero-sub">${cfg.qs||''}</div></div>
     <div class="esteps"><div class="esteps-ttl">⚙️ How We Found It</div>${sh}</div>
-    <div class="efound"><div class="efound-ttl">📋 What We Found</div><div class="efound-txt">${cfg.found?cfg.found(r):'<span class="hl">'+r.length+' records</span> returned.'}</div><div style="margin-top:14px">${ih}</div></div>
+    <div class="efound"><div class="efound-ttl">📋 What We Found</div><div class="efound-txt">${cfg.found?cfg.found(r):`<span class="hl">${r.length} records</span> returned.`}</div><div style="margin-top:14px">${ih}</div></div>
+    ${mqHtml}
     ${nh?`<div class="enext"><div class="enext-ttl">💬 Ask Next</div><div class="ngrid">${nh}</div></div>`:''}
   `;
   document.getElementById("expl").classList.add("on");
@@ -1337,6 +2017,63 @@ document.getElementById("qi").addEventListener("keydown",e=>{if(e.key==="Enter")
         alert("Error connecting to backend");
     }
 }
+
+/* ============================================================ MONGODB OPERATIONS ============================================================ */
+function showOpInfo(operation, description) {
+  const modal = document.getElementById('op-modal') || createOpModal();
+  const title = modal.querySelector('.op-modal-title');
+  const desc = modal.querySelector('.op-modal-desc');
+  const copyBtn = modal.querySelector('.op-btn-copy');
+  
+  title.textContent = operation;
+  desc.textContent = description;
+  
+  copyBtn.onclick = function() {
+    navigator.clipboard.writeText(operation);
+    log('s', 'Copied: ' + operation);
+    copyBtn.textContent = '✓ Copied!';
+    setTimeout(() => {
+      copyBtn.textContent = '📋 Copy';
+    }, 2000);
+  };
+  
+  modal.classList.add('show');
+}
+
+function createOpModal() {
+  const modal = document.createElement('div');
+  modal.id = 'op-modal';
+  modal.className = 'op-modal';
+  modal.innerHTML = `
+    <div class="op-modal-content">
+      <button class="op-modal-close" onclick="this.closest('.op-modal').classList.remove('show')">×</button>
+      <div class="op-modal-title"></div>
+      <div class="op-modal-desc"></div>
+      <div class="op-modal-action">
+        <button class="op-btn op-btn-copy">📋 Copy</button>
+        <button class="op-btn op-btn-close" onclick="this.closest('.op-modal').classList.remove('show')">Close</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  
+  // Close modal on background click
+  modal.addEventListener('click', function(e) {
+    if (e.target === this) {
+      this.classList.remove('show');
+    }
+  });
+  
+  return modal;
+}
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    const modal = document.getElementById('op-modal');
+    if (modal) modal.classList.remove('show');
+  }
+});
 </script>
 </body>
 </html>

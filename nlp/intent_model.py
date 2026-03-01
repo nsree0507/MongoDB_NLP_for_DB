@@ -1,13 +1,22 @@
 import torch
+import torch.nn.functional as F
 from transformers import DistilBertTokenizerFast, DistilBertForSequenceClassification
+
 
 class IntentModel:
 
     def __init__(self):
         self.labels = ["average","count","find","group","join","search","sum","summary"]
 
-        self.tokenizer = DistilBertTokenizerFast.from_pretrained("nlp/intent_model")
-        self.model = DistilBertForSequenceClassification.from_pretrained("distilbert-base-uncased", num_labels=2)
+        self.tokenizer = DistilBertTokenizerFast.from_pretrained("distilbert-base-uncased")
+
+        self.model = DistilBertForSequenceClassification.from_pretrained(
+            "distilbert-base-uncased",
+            num_labels=len(self.labels)
+        )
+
+        self.model.eval()
+
 
     def predict(self, text):
 
@@ -18,7 +27,13 @@ class IntentModel:
             padding=True
         )
 
-        outputs = self.model(**inputs)
-        predicted_class = torch.argmax(outputs.logits).item()
+        with torch.no_grad():
+            outputs = self.model(**inputs)
 
-        return self.labels[predicted_class]
+        probs = F.softmax(outputs.logits, dim=1)
+        confidence, predicted_class = torch.max(probs, dim=1)
+
+        label = self.labels[predicted_class.item()]
+        confidence_score = round(confidence.item() * 100, 2)
+
+        return label, confidence_score

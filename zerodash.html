@@ -1,39 +1,1132 @@
-import torch
-import torch.nn.functional as F
-from transformers import DistilBertTokenizerFast, DistilBertForSequenceClassification
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MongoQuery — AI Data Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════
+   THEME TOKENS — every color in the app
+   JS writes to these, everything updates
+═══════════════════════════════════════ */
+:root {
+  --ac:#00d4ff; --ac2:#0096b7;
+  --ac-glow:rgba(0,212,255,.15);
+  --ac-dim:rgba(0,212,255,.08);
+  --ac-border:rgba(0,212,255,.22);
+  --ac-text:#000;
 
+  --bg:#080d14; --bg2:#0e1420; --bg3:#141b28;
+  --bg4:#1a2235; --bg5:#1e2840;
+  --border:#1f2d42; --border2:#263549;
+  --text:#e2e8f0; --text2:#94a3b8;
+  --muted:#64748b; --dim:#334155;
+  --surface:rgba(255,255,255,.04);
+  --shadow:0 20px 60px rgba(0,0,0,.5);
+  --green:#10b981; --red:#ef4444;
+  --yellow:#f59e0b; --purple:#a78bfa; --orange:#f97316;
+}
+:root.light-mode {
+  --bg:#f0f4fa; --bg2:#ffffff; --bg3:#f5f8fd;
+  --bg4:#eaf0fb; --bg5:#dde6f5;
+  --border:#d1dbe8; --border2:#c0cedf;
+  --text:#0f172a; --text2:#475569;
+  --muted:#64748b; --dim:#94a3b8;
+  --surface:rgba(0,0,0,.03);
+  --shadow:0 20px 60px rgba(0,0,0,.12);
+}
 
-class IntentModel:
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);transition:background .3s,color .3s}
 
-    def __init__(self):
-        self.labels = ["average","count","find","group","join","search","sum","summary"]
+/* ═══ AUTH ═══ */
+#auth-layer{position:fixed;inset:0;z-index:200;background:linear-gradient(135deg,#0a0e1a 0%,#0d1526 50%,#0a1020 100%);display:flex;align-items:center;justify-content:center;overflow:hidden;transition:opacity .7s,transform .7s}
+#stars-canvas{position:absolute;inset:0;pointer-events:none}
+.orb{position:absolute;border-radius:50%;pointer-events:none;animation:orb-float linear infinite}
+.orb1{width:400px;height:400px;background:radial-gradient(circle,var(--ac-glow) 0%,transparent 70%);top:-120px;left:-100px;animation-duration:22s}
+.orb2{width:280px;height:280px;background:radial-gradient(circle,rgba(99,102,241,.15) 0%,transparent 70%);bottom:5%;right:8%;animation-duration:17s;animation-delay:-9s}
+.orb3{width:180px;height:180px;background:radial-gradient(circle,rgba(16,185,129,.12) 0%,transparent 70%);top:45%;left:8%;animation-duration:20s;animation-delay:-5s}
+@keyframes orb-float{0%{transform:translateY(0)rotate(0)}50%{transform:translateY(-45px)rotate(180deg)}100%{transform:translateY(0)rotate(360deg)}}
+.particle{position:absolute;border-radius:50%;pointer-events:none;animation:particle-rise linear infinite}
+@keyframes particle-rise{0%{transform:translateY(0)translateX(0)scale(1);opacity:.9}40%{transform:translateY(-40vh)translateX(18px)scale(1.2);opacity:.5}100%{transform:translateY(-105vh)translateX(-8px)scale(.2);opacity:0}}
+.ring{position:absolute;border-radius:50%;border:1px solid rgba(0,212,255,.08);pointer-events:none;animation:ring-pulse ease-in-out infinite}
+@keyframes ring-pulse{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(1.12);opacity:.15}}
 
-        self.tokenizer = DistilBertTokenizerFast.from_pretrained("distilbert-base-uncased")
+.auth-card{position:relative;z-index:10;width:420px;background:rgba(255,255,255,.05);backdrop-filter:blur(28px);border:1px solid rgba(255,255,255,.1);border-radius:24px;padding:42px 38px;box-shadow:0 30px 80px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.12);animation:card-in .65s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes card-in{from{opacity:0;transform:translateY(32px)scale(.94)}to{opacity:1;transform:none}}
+.auth-logo{display:flex;align-items:center;gap:11px;margin-bottom:30px;justify-content:center}
+.auth-logo-icon{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--ac),var(--ac2));display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 4px 16px var(--ac-glow);transition:background .3s}
+.auth-logo-txt{font-family:'Outfit',sans-serif;font-size:24px;font-weight:800;color:#fff;letter-spacing:-.5px}
+.auth-logo-txt span{color:var(--ac);transition:color .3s}
+.auth-title{font-size:27px;font-weight:800;color:#fff;text-align:center;margin-bottom:6px;letter-spacing:-.5px}
+.auth-sub{font-size:13px;color:rgba(255,255,255,.45);text-align:center;margin-bottom:28px}
+.auth-field{position:relative;margin-bottom:13px}
+.auth-field .icon{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.3);font-size:15px;pointer-events:none}
+.auth-input{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:13px 14px 13px 44px;font-family:'Outfit',sans-serif;font-size:14px;color:#fff;outline:none;transition:.25s}
+.auth-input::placeholder{color:rgba(255,255,255,.28)}
+.auth-input:focus{border-color:var(--ac);background:rgba(255,255,255,.1);box-shadow:0 0 0 3px var(--ac-glow)}
+.auth-btn{width:100%;padding:14px;border-radius:12px;border:none;cursor:pointer;font-family:'Outfit',sans-serif;font-size:16px;font-weight:700;background:linear-gradient(135deg,var(--ac),var(--ac2));color:var(--ac-text);box-shadow:0 6px 22px var(--ac-glow);transition:.25s;margin-top:4px}
+.auth-btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px var(--ac-glow)}
+.auth-btn:active{transform:none}
+.auth-divider{text-align:center;font-size:12px;color:rgba(255,255,255,.28);margin:16px 0}
+.auth-switch{text-align:center;font-size:13px;color:rgba(255,255,255,.4)}
+.auth-switch a{color:var(--ac);text-decoration:none;font-weight:600;cursor:pointer}
+.auth-switch a:hover{color:#66e3ff}
+.auth-error{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);border-radius:9px;padding:9px 13px;font-size:12px;color:#f87171;margin-bottom:13px;display:none}
+.auth-error.show{display:block}
+#login-page,#signup-page{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;transition:opacity .4s,transform .4s}
+.page-hidden{opacity:0;transform:translateX(-40px);pointer-events:none}
+.page-enter{animation:page-in .4s ease both}
+@keyframes page-in{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:none}}
 
-        self.model = DistilBertForSequenceClassification.from_pretrained(
-            "distilbert-base-uncased",
-            num_labels=len(self.labels)
-        )
+/* ═══ DASHBOARD ═══ */
+#dashboard-layer{position:fixed;inset:0;z-index:100;background:var(--bg);color:var(--text);display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .65s ease}
+#dashboard-layer.active{opacity:1;pointer-events:all}
 
-        self.model.eval()
+.topbar{height:54px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;flex-shrink:0;gap:12px;transition:background .3s,border-color .3s}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--ac),var(--ac2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 2px 10px var(--ac-glow);flex-shrink:0;transition:background .3s,box-shadow .3s}
+.logo-txt{font-size:18px;font-weight:800;color:var(--text);letter-spacing:-.5px}
+.logo-txt span{color:var(--ac);transition:color .3s}
+.tb-breadcrumb{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);background:var(--bg3);padding:5px 13px;border-radius:6px;border:1px solid var(--border);white-space:nowrap;transition:background .3s,border-color .3s}
+.tb-breadcrumb .hl{color:var(--ac)}
+.tb-right{display:flex;align-items:center;gap:9px;flex-shrink:0}
+.vbadge{background:var(--bg4);border:1px solid var(--border);color:var(--muted);padding:3px 9px;border-radius:5px;font-size:11px;font-family:'JetBrains Mono',monospace;transition:background .3s}
+.conn{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--green);font-weight:500}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.user-badge{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:5px 12px;cursor:pointer;transition:all .2s;font-size:12px;font-weight:500;color:var(--text)}
+.user-badge:hover{border-color:var(--ac);color:var(--ac)}
+.user-avatar{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,var(--ac),var(--purple));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0}
+.layout{display:flex;flex:1;overflow:hidden}
 
+/* SIDEBAR */
+.sidebar{width:220px;background:var(--bg2);border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0;display:flex;flex-direction:column;transition:background .3s,border-color .3s}
+.sb-sec{padding:14px 10px 6px}
+.sb-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--dim);text-transform:uppercase;margin-bottom:8px;padding:0 8px}
+.ni{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--muted);transition:all .15s;margin-bottom:2px;font-weight:500}
+.ni:hover{background:var(--bg3);color:var(--text)}
+.ni.act{background:var(--ac-dim);color:var(--ac);border:1px solid var(--ac-border)}
+.ni-badge{margin-left:auto;background:var(--ac);color:var(--ac-text);font-size:10px;font-weight:800;padding:1px 7px;border-radius:10px;transition:background .3s,color .3s}
+.ci{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:7px;cursor:pointer;font-size:12px;color:var(--muted);transition:all .15s;font-weight:500}
+.ci:hover,.ci.act{background:var(--bg3);color:var(--text)}
+.cc{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim)}
+.op-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:0 10px 10px}
+.ob{padding:7px 4px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);cursor:pointer;transition:all .15s;text-align:center;font-weight:500}
+.ob:hover{border-color:var(--ac);color:var(--ac)}
+.ob.act{background:var(--ac-dim);border-color:var(--ac);color:var(--ac)}
+.ds-indicator{margin:10px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;flex-shrink:0;transition:background .3s}
+.ds-ttl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin-bottom:8px}
+.ds-item{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:12px;color:var(--muted)}
+.ds-item.active-src{color:var(--ac)}
+.ds-icon{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:12px;background:var(--bg4);flex-shrink:0}
+.ds-icon.csv{background:rgba(16,185,129,.15);color:var(--green)}
+.ds-icon.pdf{background:rgba(239,68,68,.15);color:#f87171}
+.ds-icon.json{background:rgba(245,158,11,.15);color:var(--yellow)}
+.ds-icon.xlsx{background:rgba(16,185,129,.15);color:var(--green)}
+.ds-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px}
+.ds-remove{color:var(--dim);cursor:pointer;font-size:14px;transition:.15s;flex-shrink:0}
+.ds-remove:hover{color:#ef4444}
 
-    def predict(self, text):
+/* MAIN */
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column;background:var(--bg);transition:background .3s}
 
-        inputs = self.tokenizer(
-            text,
-            return_tensors="pt",
-            truncation=True,
-            padding=True
-        )
+/* UPLOAD */
+.upload-section{padding:16px 20px;border-bottom:1px solid var(--border);background:var(--bg2);flex-shrink:0;transition:background .3s}
+.upload-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.upload-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);display:flex;align-items:center;gap:7px}
+.upload-title .dot2{width:6px;height:6px;border-radius:50%;background:var(--ac);box-shadow:0 0 5px var(--ac);transition:background .3s}
+.drop-zone{border:1.5px dashed var(--border2);border-radius:12px;padding:20px 24px;text-align:center;cursor:pointer;transition:.25s;background:var(--bg3);position:relative}
+.drop-zone:hover,.drop-zone.drag-over{border-color:var(--ac);background:var(--ac-dim);box-shadow:0 0 20px var(--ac-glow)}
+.dz-icon{font-size:28px;margin-bottom:8px;display:block}
+.dz-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
+.dz-sub{font-size:12px;color:var(--muted)}
+.dz-sub span{color:var(--ac);font-weight:600;cursor:pointer}
+.dz-types{display:flex;gap:6px;justify-content:center;margin-top:10px;flex-wrap:wrap}
+.dz-type{background:var(--bg4);border:1px solid var(--border);color:var(--muted);padding:2px 9px;border-radius:4px;font-size:10px;font-family:'JetBrains Mono',monospace;font-weight:600}
+.dz-type.csv{border-color:rgba(16,185,129,.3);color:var(--green)}
+.dz-type.pdf{border-color:rgba(239,68,68,.3);color:#f87171}
+.dz-type.json{border-color:rgba(245,158,11,.3);color:var(--yellow)}
+.dz-type.xlsx{border-color:rgba(16,185,129,.3);color:var(--green)}
+#file-input{display:none}
+.uploaded-strip{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.ufile{display:flex;align-items:center;gap:7px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:12px;animation:pop-in .3s cubic-bezier(.34,1.56,.64,1) both;transition:.2s;cursor:default}
+.ufile.active-file{border-color:var(--ac);background:var(--ac-dim)}
+@keyframes pop-in{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+.ufile-icon{font-size:14px}
+.ufile-name{color:var(--text);font-weight:500;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ufile-size{color:var(--muted);font-size:10px}
+.ufile-del{color:var(--dim);cursor:pointer;font-size:15px;transition:.15s;margin-left:2px}
+.ufile-del:hover{color:#ef4444}
+.ufile-active-badge{background:var(--ac);color:var(--ac-text);font-size:9px;font-weight:800;padding:1px 6px;border-radius:4px}
+.parse-bar{height:2px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:8px;display:none}
+.parse-bar.show{display:block}
+.parse-fill{height:100%;background:linear-gradient(90deg,var(--ac),var(--purple));border-radius:2px;width:0%;transition:width .3s}
 
-        with torch.no_grad():
-            outputs = self.model(**inputs)
+/* QUERY */
+.qs{padding:16px 20px;border-bottom:1px solid var(--border);background:var(--bg2);flex-shrink:0;transition:background .3s}
+.qmeta{font-size:10px;color:var(--dim);letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px;font-weight:700}
+.ctag{background:var(--ac-dim);border:1px solid var(--ac-border);color:var(--ac);padding:2px 10px;border-radius:5px;font-size:11px;display:flex;align-items:center;gap:5px;font-weight:600;text-transform:none;letter-spacing:0;transition:all .3s}
+.qrow{display:flex;gap:9px;align-items:center}
+.qi{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 16px;font-family:'Outfit',sans-serif;font-size:15px;color:var(--text);outline:none;transition:all .25s}
+.qi:focus{border-color:var(--ac);box-shadow:0 0 0 3px var(--ac-glow)}
+.qi::placeholder{color:var(--dim)}
+.bcl{background:transparent;border:1px solid var(--border);color:var(--muted);padding:11px 15px;border-radius:9px;font-size:13px;cursor:pointer;transition:.15s;font-family:'Outfit',sans-serif}
+.bcl:hover{color:var(--text);border-color:var(--muted)}
+.brun{background:linear-gradient(135deg,var(--ac),var(--ac2));color:var(--ac-text);border:none;padding:12px 22px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:7px;transition:.2s;white-space:nowrap;font-family:'Outfit',sans-serif}
+.brun:hover{box-shadow:0 6px 20px var(--ac-glow);transform:translateY(-1px)}
+.brun.ld{background:var(--bg4);color:var(--muted);cursor:not-allowed;transform:none;box-shadow:none}
+.chips{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
+.chip{background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:20px;font-size:12px;cursor:pointer;transition:.15s;font-weight:500}
+.chip:hover{border-color:var(--ac);color:var(--ac)}
 
-        probs = F.softmax(outputs.logits, dim=1)
-        confidence, predicted_class = torch.max(probs, dim=1)
+/* PIPELINE */
+.pipe{display:none;align-items:center;background:var(--bg2);border-bottom:1px solid var(--border);padding:0 20px;overflow-x:auto;flex-shrink:0;transition:background .3s}
+.pipe.on{display:flex}
+.ps{display:flex;flex-direction:column;align-items:center;padding:11px 16px;gap:4px;flex-shrink:0}
+.pi{font-size:16px}.pi.done{color:var(--ac)}.pi.pend{color:var(--dim)}.pi.run{color:var(--yellow);animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pl{font-size:10px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.05em}.pl.done{color:var(--ac)}
+.psep{color:var(--dim);font-size:16px;flex-shrink:0}
 
-        label = self.labels[predicted_class.item()]
-        confidence_score = round(confidence.item() * 100, 2)
+/* CODE */
+.cb{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 20px 16px;display:none;flex-shrink:0;transition:background .3s}
+.cb.on{display:block}
+.ch{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding-top:14px}
+.cop{background:var(--ac-dim);border:1px solid var(--ac-border);color:var(--ac);font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 11px;border-radius:5px;transition:all .3s}
+.csum{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+.cbody{background:#050a10;border:1px solid var(--border);border-left:3px solid var(--ac);border-radius:10px;padding:16px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.75;position:relative;transition:border-left-color .3s}
+.ccopy{position:absolute;top:10px;right:10px;background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;transition:.15s;font-family:'Outfit',sans-serif}
+.ccopy:hover{color:var(--text)}
+.kw{color:var(--purple)}.fn{color:var(--ac)}.str{color:var(--orange)}.op{color:var(--yellow)}.cm{color:var(--dim)}
 
-        return label, confidence_score
+/* STATS */
+.sc{display:none;grid-template-columns:repeat(4,1fr);gap:12px;padding:16px 20px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;transition:background .3s}
+.sc.on{display:grid}
+.scard{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:16px 18px;transition:all .2s}
+.scard:hover{border-color:var(--border2)}
+.slbl{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.sval{font-size:28px;font-weight:800;font-family:'JetBrains Mono',monospace;line-height:1;transition:color .3s}
+.sval.c{color:var(--ac)}.sval.g{color:var(--green)}.sval.y{color:var(--yellow)}.sval.p{color:var(--purple)}
+.ssub{font-size:11px;color:var(--dim);margin-top:5px}
+
+/* EXPLANATION */
+.expl{padding:20px;border-bottom:1px solid var(--border);display:none;flex-shrink:0}
+.expl.on{display:block}
+.expl-hdr{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin-bottom:14px;display:flex;align-items:center;gap:7px}
+.eg{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ehero{background:linear-gradient(135deg,var(--ac-dim),rgba(0,212,255,.02));border:1px solid var(--ac-border);border-radius:12px;padding:18px 20px;grid-column:1/-1;transition:all .3s}
+.ehero-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ac);margin-bottom:6px;transition:color .3s}
+.ehero-q{font-size:17px;font-weight:700;color:var(--text);margin-bottom:5px}
+.ehero-sub{font-size:13px;color:var(--muted)}
+.esteps{background:var(--bg2);border:1px solid var(--border);border-radius:11px;padding:16px 18px;transition:background .3s}
+.esteps-ttl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin-bottom:12px}
+.estep{display:flex;gap:12px;margin-bottom:13px;position:relative}
+.estep:not(:last-child)::before{content:'';position:absolute;left:11px;top:26px;bottom:-5px;width:1px;background:var(--border)}
+.enum{width:24px;height:24px;border-radius:50%;background:var(--ac-dim);border:1px solid var(--ac-border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--ac);flex-shrink:0;transition:all .3s}
+.ebody{flex:1}.ehead{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px}.edesc{font-size:12px;color:var(--muted);line-height:1.6}
+.efound{background:var(--bg2);border:1px solid var(--border);border-radius:11px;padding:16px 18px;transition:background .3s}
+.efound-ttl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin-bottom:10px}
+.efound-txt{font-size:13px;color:var(--text);line-height:1.75}
+.hl{color:var(--ac);font-weight:700;transition:color .3s}
+.ins{display:flex;align-items:flex-start;gap:8px;padding:9px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;margin-bottom:7px;font-size:12px;color:var(--text);line-height:1.55;transition:background .3s}
+.enext{grid-column:1/-1}
+.enext-ttl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin-bottom:10px}
+.ngrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.nbtn{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:10px 12px;font-size:12px;color:var(--muted);cursor:pointer;text-align:left;transition:.15s;font-family:'Outfit',sans-serif;display:flex;align-items:center;gap:7px;font-weight:500}
+.nbtn:hover{border-color:var(--ac);color:var(--ac);background:var(--ac-dim)}
+
+/* RESULTS */
+.rs{padding:20px;display:none;flex-shrink:0}
+.rs.on{display:block}
+.rh{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.rt{font-size:14px;font-weight:700;display:flex;align-items:center;gap:10px;color:var(--text)}
+.rcnt{background:var(--bg3);border:1px solid var(--border);color:var(--muted);font-size:11px;padding:2px 10px;border-radius:10px;font-family:'JetBrains Mono',monospace}
+.expbtn{font-size:12px;color:var(--muted);cursor:pointer;transition:.15s;background:var(--bg3);border:1px solid var(--border);padding:6px 13px;border-radius:7px;font-weight:500}
+.expbtn:hover{color:var(--ac);border-color:var(--ac)}
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:16px}
+.tab{padding:9px 16px;font-size:13px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:.15s;display:flex;align-items:center;gap:5px;margin-bottom:-1px;font-weight:500}
+.tab:hover{color:var(--text)}.tab.act{color:var(--ac);border-bottom-color:var(--ac)}
+.dtable{width:100%;border-collapse:collapse;font-size:12px}
+.dtable th{text-align:left;padding:9px 12px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--dim);border-bottom:1px solid var(--border);background:var(--bg3)}
+.dtable td{padding:10px 12px;border-bottom:1px solid rgba(31,45,66,.5);font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text)}
+.dtable tr:hover td{background:var(--bg3)}
+.tdept{display:inline-block;background:rgba(163,139,250,.1);border:1px solid rgba(163,139,250,.2);color:var(--purple);padding:1px 9px;border-radius:5px;font-size:11px}
+.tact{color:var(--green);font-size:11px}.tina{color:#f87171;font-size:11px}
+.tfile{display:inline-block;font-size:10px;padding:2px 7px;border-radius:4px;font-weight:700}
+.tfile.csv{background:rgba(16,185,129,.12);color:var(--green);border:1px solid rgba(16,185,129,.25)}
+.tfile.pdf{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.25)}
+.tfile.json{background:rgba(245,158,11,.12);color:var(--yellow);border:1px solid rgba(245,158,11,.25)}
+
+/* CHARTS */
+.cg{display:none;grid-template-columns:1fr 1fr;gap:14px;padding:0 20px 20px;flex-shrink:0}.cg.on{display:grid}
+.ccard{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px;transition:background .3s}
+.cttl{font-size:13px;font-weight:700;margin-bottom:4px;color:var(--text)}.csub{font-size:11px;color:var(--muted);margin-bottom:14px}
+canvas{display:block;max-width:100%}
+
+/* LOG */
+.lp{margin:0 20px 20px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;flex-shrink:0;display:none;transition:background .3s}.lp.on{display:block}
+.lh{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border)}
+.lt2{font-size:13px;font-weight:700;color:var(--text)}.live{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--green);font-weight:600}
+.lb{padding:10px 16px;font-family:'JetBrains Mono',monospace;font-size:11px;display:flex;flex-direction:column;gap:3px;max-height:120px;overflow-y:auto}
+.ll{display:flex;gap:10px}.ltm{color:var(--dim)}.li{color:var(--purple)}.ls{color:var(--ac)}.lw{color:var(--yellow)}.lm{color:var(--muted)}
+
+/* ═══ OPS SECTION ═══ */
+.ops-section-card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px;transition:background .3s}
+.ops-section-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.ops-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.op-btn{background:var(--bg4);border:1px solid var(--border);border-radius:8px;padding:12px 16px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted);cursor:pointer;transition:.2s;text-align:center;font-weight:500;width:100%}
+.op-btn:hover{border-color:var(--ac);color:var(--ac);background:var(--ac-dim);transform:translateY(-1px);box-shadow:0 4px 12px var(--ac-glow)}
+
+/* ═══════════════════════════════════════════════════
+   ⚙️  SETTINGS — fully working theme system
+═══════════════════════════════════════════════════ */
+.settings-wrap{padding:0;overflow-y:auto;height:100%}
+.settings-banner{padding:28px 28px 24px;background:linear-gradient(135deg,var(--ac-dim),transparent);border-bottom:1px solid var(--border);transition:background .3s}
+.settings-banner h1{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.4px;margin-bottom:4px}
+.settings-banner p{font-size:13px;color:var(--muted)}
+.settings-grid{padding:24px 28px;display:flex;flex-direction:column;gap:20px}
+
+/* Card */
+.sc-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:background .3s,border-color .3s}
+.sc-card-head{display:flex;align-items:center;gap:14px;padding:18px 22px;border-bottom:1px solid var(--border)}
+.sc-card-ico{width:38px;height:38px;border-radius:10px;background:var(--ac-dim);border:1px solid var(--ac-border);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;transition:all .3s}
+.sc-card-ttl{font-size:15px;font-weight:700;color:var(--text)}
+.sc-card-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.sc-card-body{padding:22px}
+
+/* Mode picker */
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
+.mode-tile{border:2px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:12px;background:var(--bg3)}
+.mode-tile:hover{border-color:var(--ac)}
+.mode-tile.active{border-color:var(--ac);background:var(--ac-dim)}
+.mode-tile-icon{font-size:24px}
+.mode-tile-label{font-size:14px;font-weight:700;color:var(--text)}
+.mode-tile-sub{font-size:11px;color:var(--muted)}
+
+/* Colour swatches */
+.swatches-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--dim);margin-bottom:14px}
+.swatches-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.swatch{border-radius:12px;padding:14px 12px 12px;cursor:pointer;border:2px solid transparent;transition:all .22s cubic-bezier(.34,1.56,.64,1);background:var(--bg3);position:relative}
+.swatch:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.swatch.active{border-color:var(--ac);box-shadow:0 0 0 3px var(--ac-glow)}
+.swatch.active .sw-tick{opacity:1;transform:scale(1)}
+.sw-preview{height:44px;border-radius:8px;margin-bottom:10px;position:relative;overflow:hidden}
+.sw-bar{position:absolute;top:10px;left:10px;right:10px;height:5px;border-radius:3px;background:rgba(255,255,255,.35)}
+.sw-dots{position:absolute;bottom:8px;left:10px;display:flex;gap:5px}
+.sw-dot{width:8px;height:8px;border-radius:50%}
+.sw-tick{position:absolute;top:8px;right:8px;width:20px;height:20px;border-radius:50%;background:var(--ac);color:var(--ac-text);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;opacity:0;transform:scale(.4);transition:all .22s cubic-bezier(.34,1.56,.64,1)}
+.sw-name{font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px}
+.sw-sub{font-size:10px;color:var(--muted)}
+
+/* Standard setting row */
+.s-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)}
+.s-row:last-child{border-bottom:none}
+.s-row-left{}
+.s-row-label{font-size:13px;font-weight:600;color:var(--text)}
+.s-row-desc{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* Toggle */
+.s-toggle{width:46px;height:26px;background:var(--ac);border-radius:13px;cursor:pointer;position:relative;transition:background .25s;flex-shrink:0}
+.s-toggle.off{background:var(--border2)}
+.s-toggle::after{content:'';position:absolute;width:20px;height:20px;background:#fff;border-radius:50%;top:3px;left:3px;transition:left .25s;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.s-toggle:not(.off)::after{left:23px}
+
+/* Select */
+.s-select{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:8px;font-family:'Outfit',sans-serif;font-size:13px;outline:none;cursor:pointer;min-width:160px;transition:border-color .2s}
+.s-select:focus{border-color:var(--ac)}
+option{background:var(--bg2);color:var(--text)}
+
+/* Connection indicator */
+.conn-card{display:flex;align-items:center;gap:14px;padding:14px;background:var(--bg3);border-radius:10px;border:1px solid var(--border)}
+.conn-card-dot{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite;flex-shrink:0}
+.conn-card-info{flex:1}
+.conn-card-host{font-size:13px;font-weight:700;color:var(--text)}
+.conn-card-sub{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:2px}
+.conn-card-btn{background:var(--ac-dim);border:1px solid var(--ac-border);color:var(--ac);padding:7px 14px;border-radius:8px;font-size:12px;cursor:pointer;font-weight:600;font-family:'Outfit',sans-serif;transition:.2s;white-space:nowrap}
+.conn-card-btn:hover{background:var(--ac);color:var(--ac-text)}
+
+/* About grid */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.about-tile{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px}
+.about-tile-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px}
+.about-tile-val{font-size:14px;font-weight:700;color:var(--ac);font-family:'JetBrains Mono',monospace}
+
+/* Toast */
+.toast{position:fixed;top:16px;right:16px;z-index:9999;background:var(--bg2);border:1px solid var(--ac);color:var(--text);padding:12px 18px;border-radius:11px;font-size:13px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow);animation:toast-in .4s ease,toast-out .4s ease 2.8s both;pointer-events:none;font-weight:500;transition:background .3s,border-color .3s}
+@keyframes toast-in{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:none}}
+@keyframes toast-out{from{opacity:1;transform:none}to{opacity:0;transform:translateX(30px)}}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--dim)}
+
+/* Query history items */
+.qh-item{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:background .15s}
+.qh-item:hover{background:var(--bg3)}.qh-item:last-child{border-bottom:none}
+.qh-q{color:var(--text);font-size:13px;margin-bottom:3px}
+.qh-meta{color:var(--muted);font-size:10px}
+.qh-replay{color:var(--ac);font-size:14px;opacity:.6;transition:.15s}.qh-replay:hover{opacity:1}
+</style>
+</head>
+<body>
+
+<!-- ═══ AUTH ═══ -->
+<div id="auth-layer">
+  <canvas id="stars-canvas"></canvas>
+  <div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div>
+
+  <div id="login-page">
+    <div class="auth-card">
+      <div class="auth-logo"><div class="auth-logo-icon">🍃</div><div class="auth-logo-txt">Mongo<span>Query</span></div></div>
+      <div class="auth-title">Welcome back</div>
+      <div class="auth-sub">Sign in to your AI data dashboard</div>
+      <div class="auth-error" id="login-err"></div>
+      <div class="auth-field"><span class="icon">👤</span><input class="auth-input" id="l-user" type="text" placeholder="Username"></div>
+      <div class="auth-field"><span class="icon">🔒</span><input class="auth-input" id="l-pass" type="password" placeholder="Password"></div>
+      <button class="auth-btn" onclick="doLogin()">Sign In</button>
+      <div class="auth-divider">— or —</div>
+      <div class="auth-switch">New here? <a onclick="showSignup()">Create an account</a></div>
+      <div style="text-align:center;margin-top:12px;font-size:11px;color:rgba(255,255,255,.2)">Demo: any username + any password</div>
+    </div>
+  </div>
+
+  <div id="signup-page" class="page-hidden">
+    <div class="auth-card">
+      <div class="auth-logo"><div class="auth-logo-icon">🍃</div><div class="auth-logo-txt">Mongo<span>Query</span></div></div>
+      <div class="auth-title">Create Account</div>
+      <div class="auth-sub">Start querying your data with AI</div>
+      <div class="auth-error" id="signup-err"></div>
+      <div class="auth-field"><span class="icon">👤</span><input class="auth-input" id="s-user" type="text" placeholder="Username"></div>
+      <div class="auth-field"><span class="icon">✉️</span><input class="auth-input" id="s-email" type="email" placeholder="Email"></div>
+      <div class="auth-field"><span class="icon">🔒</span><input class="auth-input" id="s-pass" type="password" placeholder="Password"></div>
+      <div class="auth-field"><span class="icon">🔒</span><input class="auth-input" id="s-pass2" type="password" placeholder="Confirm Password"></div>
+      <button class="auth-btn" onclick="doSignup()">Create Account</button>
+      <div class="auth-divider">— or —</div>
+      <div class="auth-switch">Already have an account? <a onclick="showLogin()">Sign in</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DASHBOARD ═══ -->
+<div id="dashboard-layer">
+  <div class="topbar">
+    <div class="logo"><div class="logo-icon">🍃</div><div class="logo-txt">Mongo<span>Query</span></div></div>
+    <div class="tb-breadcrumb">db.<span class="hl" id="tb-coll">employees</span> .find(...)</div>
+    <div class="tb-right">
+      <div class="vbadge">v9.0</div>
+      <div class="conn"><div class="dot"></div>CONNECTED</div>
+      <div class="user-badge" onclick="doLogout()">
+        <div class="user-avatar" id="uav">?</div>
+        <span id="uname">user</span>
+        <span style="color:var(--dim);font-size:11px">↩</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sb-sec">
+        <div class="sb-lbl">Navigation</div>
+        <div class="ni act" data-section="query-generator" onclick="switchSection('query-generator',this)">⚡ Query Generator <span class="ni-badge">5</span></div>
+        <div class="ni" data-section="aggregations" onclick="switchSection('aggregations',this)">📊 Aggregations</div>
+        <div class="ni" data-section="collections" onclick="switchSection('collections',this)">📁 Collections</div>
+        <div class="ni" data-section="mongodb-ops" onclick="switchSection('mongodb-ops',this)">📟 MongoDB Ops</div>
+        <div class="ni" data-section="query-history" onclick="switchSection('query-history',this)">🕐 Query History</div>
+        <div class="ni" data-section="indexes" onclick="switchSection('indexes',this)">🔍 Indexes</div>
+        <div class="ni" data-section="settings" onclick="switchSection('settings',this)">⚙️ Settings</div>
+      </div>
+      <div class="sb-sec">
+        <div class="sb-lbl">Collections</div>
+        <div class="ci act" onclick="runCollectionQuery('employees',event)">📂 employees <span class="cc">1,240</span></div>
+        <div class="ci" onclick="runCollectionQuery('departments',event)">📂 departments <span class="cc">12</span></div>
+        <div class="ci" onclick="runCollectionQuery('projects',event)">📂 projects <span class="cc">348</span></div>
+        <div class="ci" onclick="runCollectionQuery('salaries',event)">📂 salaries <span class="cc">4,820</span></div>
+      </div>
+      <div class="sb-sec"><div class="sb-lbl">Operation</div></div>
+      <div class="op-grid">
+        <div class="ob act" onclick="setOperation('find',this)">find()</div><div class="ob" onclick="setOperation('aggregate',this)">aggregate()</div>
+        <div class="ob" onclick="setOperation('insertOne',this)">insertOne()</div><div class="ob" onclick="setOperation('updateMany',this)">updateMany()</div>
+        <div class="ob" onclick="setOperation('deleteOne',this)">deleteOne()</div><div class="ob" onclick="setOperation('countDocs',this)">countDocs()</div>
+      </div>
+      <div class="ds-indicator" id="ds-panel" style="display:none">
+        <div class="ds-ttl">Loaded Data Sources</div>
+        <div id="ds-list"></div>
+      </div>
+    </aside>
+
+    <main class="main" id="ms">
+
+      <!-- QUERY GENERATOR -->
+      <div class="dashboard-section" id="section-query-generator" style="display:flex;flex-direction:column;overflow-y:auto">
+        <div class="upload-section">
+          <div class="upload-hdr"><div class="upload-title"><div class="dot2"></div> Data Sources — Upload Your Files</div></div>
+          <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+            <span class="dz-icon">📂</span>
+            <div class="dz-title">Drop files here or <span>browse</span></div>
+            <div class="dz-sub">Upload any data file to query it with natural language</div>
+            <div class="dz-types">
+              <span class="dz-type csv">CSV</span><span class="dz-type pdf">PDF</span><span class="dz-type json">JSON</span>
+              <span class="dz-type xlsx">XLSX</span><span class="dz-type">TXT</span>
+              <span class="dz-type" style="border-color:rgba(99,102,241,.3);color:var(--purple)">XML</span>
+              <span class="dz-type" style="border-color:rgba(245,158,11,.3);color:var(--yellow)">YAML</span>
+              <span class="dz-type" style="border-color:rgba(0,212,255,.3);color:var(--ac)">SQL</span>
+            </div>
+          </div>
+          <input type="file" id="file-input" multiple accept=".csv,.pdf,.json,.xlsx,.xls,.txt,.xml,.yaml,.yml,.sql" onchange="handleFileInput(event)">
+          <div class="parse-bar" id="parse-bar"><div class="parse-fill" id="parse-fill"></div></div>
+          <div class="uploaded-strip" id="uploaded-strip"></div>
+        </div>
+
+        <div class="qs">
+          <div class="qmeta">Natural Language → MongoDB <div class="ctag">🍃 <span id="q-src">db.employees</span></div></div>
+          <div class="qrow">
+            <input class="qi" id="qi" placeholder="Ask in plain English… e.g. Who earns the most?" value="Hired after 2020">
+            <button class="bcl" onclick="clearQ()">Clear</button>
+            <button class="brun" id="rb" onclick="runQuery()">⚡ Generate + Run</button>
+          </div>
+          <div class="chips" id="chips">
+            <div class="chip" onclick="sq('Find all employees in Sales')">Find all in Sales</div>
+            <div class="chip" onclick="sq('Top 5 highest paid')">Top 5 highest paid</div>
+            <div class="chip" onclick="sq('Count by department')">Count by dept</div>
+            <div class="chip" onclick="sq('Hired after 2020')">Hired after 2020</div>
+            <div class="chip" onclick="sq('Average salary per dept')">Avg salary per dept</div>
+          </div>
+        </div>
+
+        <div class="pipe" id="pipe">
+          <div class="ps"><div class="pi pend" id="p1">○</div><div class="pl" id="l1">Tokenize</div></div><div class="psep">›</div>
+          <div class="ps"><div class="pi pend" id="p2">○</div><div class="pl" id="l2">Intent</div></div><div class="psep">›</div>
+          <div class="ps"><div class="pi pend" id="p3">○</div><div class="pl" id="l3">Schema Map</div></div><div class="psep">›</div>
+          <div class="ps"><div class="pi pend" id="p4">○</div><div class="pl" id="l4">Query Gen</div></div><div class="psep">›</div>
+          <div class="ps"><div class="pi pend" id="p5">○</div><div class="pl" id="l5">Optimize</div></div><div class="psep">›</div>
+          <div class="ps"><div class="pi pend" id="p6">○</div><div class="pl" id="l6">Execute</div></div>
+        </div>
+        <div class="cb" id="cb"><div class="ch"><div class="cop" id="cop">find()</div><div class="csum" id="csum"></div></div><div class="cbody"><button class="ccopy" onclick="copyCode()">Copy</button><div id="cd"></div></div></div>
+        <div class="sc" id="sc">
+          <div class="scard"><div class="slbl">Documents</div><div class="sval c" id="sd">—</div><div class="ssub">matched</div></div>
+          <div class="scard"><div class="slbl">Confidence</div><div class="sval g" id="sf">—</div><div class="ssub">model accuracy</div></div>
+          <div class="scard"><div class="slbl">Exec Time</div><div class="sval y" id="st">—</div><div class="ssub">milliseconds</div></div>
+          <div class="scard"><div class="slbl">Index Used</div><div class="sval p" id="si">—</div><div class="ssub">scan type</div></div>
+        </div>
+        <div class="expl" id="expl"><div class="expl-hdr">💡 Plain English Explanation</div><div class="eg" id="eg"></div></div>
+        <div class="rs" id="rs">
+          <div class="rh"><div class="rt">⚡ Query Results <span class="rcnt" id="rc"></span></div><div style="display:flex;gap:8px"><div class="expbtn" onclick="exportJ()">↓ JSON</div><div class="expbtn" onclick="exportCSV()">↓ CSV</div></div></div>
+          <div class="tabs"><div class="tab act" onclick="st2('t',this)">⊞ Table</div><div class="tab" onclick="st2('j',this)">{ } JSON</div></div>
+          <div id="tt"><table class="dtable"><thead id="th"></thead><tbody id="tb"></tbody></table></div>
+          <div id="tj" style="display:none"><pre id="jp" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);white-space:pre-wrap;background:var(--bg3);padding:16px;border-radius:10px;border:1px solid var(--border)"></pre></div>
+        </div>
+        <div class="cg" id="cg">
+          <div class="ccard"><div class="cttl">Query Method Distribution</div><div class="csub">Usage across query types this session</div><canvas id="dc" width="360" height="230"></canvas></div>
+          <div class="ccard"><div class="cttl">Execution Time History</div><div class="csub">Last 10 queries (ms)</div><canvas id="lc" width="520" height="230"></canvas></div>
+        </div>
+        <div class="lp" id="lp"><div class="lh"><div class="lt2">Execution Log</div><div class="live"><div class="dot"></div>LIVE</div></div><div class="lb" id="lb"></div></div>
+      </div>
+
+      <!-- AGGREGATIONS -->
+      <div class="dashboard-section" id="section-aggregations" style="display:none;padding:28px">
+        <h2 style="color:var(--text);font-size:20px;font-weight:800;margin-bottom:8px">📊 Aggregations</h2>
+        <p style="color:var(--muted);margin-bottom:20px;font-size:13px">Build and execute MongoDB aggregation pipelines</p>
+        <div class="ops-section-card"><div class="ops-section-title">🔄 Common Aggregations</div><div class="ops-grid">
+          <button class="op-btn" onclick="sq('Count by department');switchSection('query-generator',document.querySelector('[data-section=query-generator]'));runQuery()">Group &amp; Count</button>
+          <button class="op-btn" onclick="sq('Average salary per dept');switchSection('query-generator',document.querySelector('[data-section=query-generator]'));runQuery()">Calculate Average</button>
+          <button class="op-btn" onclick="sq('Top 5 highest paid');switchSection('query-generator',document.querySelector('[data-section=query-generator]'));runQuery()">Top N Records</button>
+          <button class="op-btn" onclick="sq('Sum salary by department');switchSection('query-generator',document.querySelector('[data-section=query-generator]'));runQuery()">Sum by Group</button>
+        </div></div>
+      </div>
+
+      <!-- COLLECTIONS -->
+      <div class="dashboard-section" id="section-collections" style="display:none;padding:28px">
+        <h2 style="color:var(--text);font-size:20px;font-weight:800;margin-bottom:8px">📁 Collections</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px">
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='var(--ac)'" onmouseout="this.style.borderColor=''" onclick="runCollectionQuery('employees',event);switchSection('query-generator',document.querySelector('[data-section=query-generator]'))"><div style="color:var(--ac);font-weight:700;font-size:15px;margin-bottom:6px">📂 employees</div><div style="color:var(--muted);font-size:12px">1,240 documents</div><div style="margin-top:8px;font-size:11px;color:var(--dim)">id, name, dept, salary, hired, status</div></div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='var(--ac)'" onmouseout="this.style.borderColor=''"><div style="color:var(--ac);font-weight:700;font-size:15px;margin-bottom:6px">📂 departments</div><div style="color:var(--muted);font-size:12px">12 documents</div><div style="margin-top:8px;font-size:11px;color:var(--dim)">id, name, budget, headcount</div></div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='var(--ac)'" onmouseout="this.style.borderColor=''"><div style="color:var(--ac);font-weight:700;font-size:15px;margin-bottom:6px">📂 projects</div><div style="color:var(--muted);font-size:12px">348 documents</div><div style="margin-top:8px;font-size:11px;color:var(--dim)">id, title, status, deadline</div></div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='var(--ac)'" onmouseout="this.style.borderColor=''"><div style="color:var(--ac);font-weight:700;font-size:15px;margin-bottom:6px">📂 salaries</div><div style="color:var(--muted);font-size:12px">4,820 documents</div><div style="margin-top:8px;font-size:11px;color:var(--dim)">emp_id, amount, month, year</div></div>
+        </div>
+      </div>
+
+      <!-- MONGODB OPS -->
+      <div class="dashboard-section" id="section-mongodb-ops" style="display:none;overflow-y:auto;padding:28px">
+        <h2 style="color:var(--text);font-size:20px;font-weight:800;margin-bottom:8px">📟 MongoDB Operations</h2>
+        <p style="color:var(--muted);font-size:13px;margin-bottom:20px">Click any operation to use it in the query box</p>
+        <div class="ops-section-card"><div class="ops-section-title">🗄️ Database</div><div class="ops-grid"><button class="op-btn" onclick="insertMongoOp('show dbs')">show dbs</button><button class="op-btn" onclick="insertMongoOp('use &lt;db&gt;')">use &lt;db&gt;</button><button class="op-btn" onclick="insertMongoOp('db.dropDatabase()')">dropDatabase()</button><button class="op-btn" onclick="insertMongoOp('db.stats()')">db.stats()</button></div></div>
+        <div class="ops-section-card"><div class="ops-section-title">📁 Collection</div><div class="ops-grid"><button class="op-btn" onclick="insertMongoOp('show collections')">show collections</button><button class="op-btn" onclick="insertMongoOp('db.createCollection()')">createCollection()</button><button class="op-btn" onclick="insertMongoOp('db.collection.drop()')">collection.drop()</button><button class="op-btn" onclick="insertMongoOp('db.collection.stats()')">collection.stats()</button></div></div>
+        <div class="ops-section-card"><div class="ops-section-title">➕ Insert</div><div class="ops-grid"><button class="op-btn" onclick="insertMongoOp('insertOne()')">insertOne()</button><button class="op-btn" onclick="insertMongoOp('insertMany()')">insertMany()</button></div></div>
+        <div class="ops-section-card"><div class="ops-section-title">🔍 Read</div><div class="ops-grid"><button class="op-btn" onclick="insertMongoOp('find()')">find()</button><button class="op-btn" onclick="insertMongoOp('findOne()')">findOne()</button><button class="op-btn" onclick="insertMongoOp('countDocuments()')">countDocuments()</button><button class="op-btn" onclick="insertMongoOp('distinct()')">distinct()</button><button class="op-btn" onclick="insertMongoOp('limit()')">limit()</button><button class="op-btn" onclick="insertMongoOp('skip()')">skip()</button><button class="op-btn" onclick="insertMongoOp('sort()')">sort()</button><button class="op-btn" onclick="insertMongoOp('explain()')">explain()</button></div></div>
+        <div class="ops-section-card"><div class="ops-section-title">✏️ Update</div><div class="ops-grid"><button class="op-btn" onclick="insertMongoOp('updateOne()')">updateOne()</button><button class="op-btn" onclick="insertMongoOp('updateMany()')">updateMany()</button><button class="op-btn" onclick="insertMongoOp('replaceOne()')">replaceOne()</button><button class="op-btn" onclick="insertMongoOp('findOneAndUpdate()')">findOneAndUpdate()</button><button class="op-btn" onclick="insertMongoOp('$set')">$set</button><button class="op-btn" onclick="insertMongoOp('$inc')">$inc</button><button class="op-btn" onclick="insertMongoOp('$push')">$push</button><button class="op-btn" onclick="insertMongoOp('$pull')">$pull</button></div></div>
+        <div class="ops-section-card"><div class="ops-section-title">🗑️ Delete</div><div class="ops-grid"><button class="op-btn" onclick="insertMongoOp('deleteOne()')">deleteOne()</button><button class="op-btn" onclick="insertMongoOp('deleteMany()')">deleteMany()</button><button class="op-btn" onclick="insertMongoOp('findOneAndDelete()')">findOneAndDelete()</button></div></div>
+        <div class="ops-section-card"><div class="ops-section-title">📊 Aggregation</div><div class="ops-grid"><button class="op-btn" onclick="sq('Group and count by department');switchSection('query-generator',document.querySelector('[data-section=query-generator]'))">$group</button><button class="op-btn" onclick="insertMongoOp('$sort')">$sort</button><button class="op-btn" onclick="insertMongoOp('$match')">$match</button><button class="op-btn" onclick="insertMongoOp('$project')">$project</button><button class="op-btn" onclick="insertMongoOp('$limit')">$limit</button><button class="op-btn" onclick="insertMongoOp('$skip')">$skip</button><button class="op-btn" onclick="insertMongoOp('$lookup')">$lookup</button><button class="op-btn" onclick="insertMongoOp('$unwind')">$unwind</button><button class="op-btn" onclick="insertMongoOp('$out')">$out</button><button class="op-btn" onclick="insertMongoOp('$addFields')">$addFields</button></div></div>
+        <div class="ops-section-card"><div class="ops-section-title">🔢 Operators</div><div class="ops-grid"><button class="op-btn" onclick="insertMongoOp('$eq')">$eq</button><button class="op-btn" onclick="insertMongoOp('$ne')">$ne</button><button class="op-btn" onclick="insertMongoOp('$gt')">$gt</button><button class="op-btn" onclick="insertMongoOp('$gte')">$gte</button><button class="op-btn" onclick="insertMongoOp('$lt')">$lt</button><button class="op-btn" onclick="insertMongoOp('$lte')">$lte</button><button class="op-btn" onclick="insertMongoOp('$in')">$in</button><button class="op-btn" onclick="insertMongoOp('$nin')">$nin</button><button class="op-btn" onclick="insertMongoOp('$and')">$and</button><button class="op-btn" onclick="insertMongoOp('$or')">$or</button><button class="op-btn" onclick="insertMongoOp('$not')">$not</button><button class="op-btn" onclick="insertMongoOp('$nor')">$nor</button></div></div>
+        <div class="ops-section-card"><div class="ops-section-title">🔑 Indexes</div><div class="ops-grid"><button class="op-btn" onclick="insertMongoOp('createIndex()')">createIndex()</button><button class="op-btn" onclick="insertMongoOp('getIndexes()')">getIndexes()</button><button class="op-btn" onclick="insertMongoOp('dropIndex()')">dropIndex()</button><button class="op-btn" onclick="insertMongoOp('reIndex()')">reIndex()</button></div></div>
+        <div class="ops-section-card"><div class="ops-section-title">⚙️ Advanced</div><div class="ops-grid"><button class="op-btn" onclick="insertMongoOp('bulkWrite()')">bulkWrite()</button><button class="op-btn" onclick="insertMongoOp('startSession()')">startSession()</button><button class="op-btn" onclick="insertMongoOp('watch()')">watch()</button></div></div>
+      </div>
+
+      <!-- QUERY HISTORY -->
+      <div class="dashboard-section" id="section-query-history" style="display:none;padding:28px">
+        <h2 style="color:var(--text);font-size:20px;font-weight:800;margin-bottom:8px">🕐 Query History</h2>
+        <p style="color:var(--muted);margin-bottom:20px;font-size:13px">Recent queries from this session</p>
+        <div id="query-history-list" style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden">
+          <div style="padding:40px;text-align:center;color:var(--muted)"><div style="font-size:32px;margin-bottom:8px">📭</div><div>No queries yet — run a query to see history</div></div>
+        </div>
+      </div>
+
+      <!-- INDEXES -->
+      <div class="dashboard-section" id="section-indexes" style="display:none;padding:28px">
+        <h2 style="color:var(--text);font-size:20px;font-weight:800;margin-bottom:8px">🔍 Indexes</h2>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-top:16px">
+          <table class="dtable">
+            <thead><tr><th>Collection</th><th>Index</th><th>Type</th><th>Selectivity</th></tr></thead>
+            <tbody>
+              <tr><td>employees</td><td style="color:var(--ac)">_id</td><td><span class="tact">● UNIQUE</span></td><td>100%</td></tr>
+              <tr><td>employees</td><td style="color:var(--ac)">department</td><td>STANDARD</td><td>85%</td></tr>
+              <tr><td>employees</td><td style="color:var(--ac)">hire_date</td><td>STANDARD</td><td>92%</td></tr>
+              <tr><td>employees</td><td style="color:var(--ac)">salary</td><td>STANDARD</td><td>78%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════
+           ⚙️  SETTINGS  — everything works live
+      ═══════════════════════════════════════════ -->
+      <div class="dashboard-section settings-wrap" id="section-settings" style="display:none">
+
+        <div class="settings-banner">
+          <h1>⚙️ Preferences</h1>
+          <p>Personalise your dashboard — every change takes effect instantly across the whole app</p>
+        </div>
+
+        <div class="settings-grid">
+
+          <!-- ── APPEARANCE ── -->
+          <div class="sc-card">
+            <div class="sc-card-head">
+              <div class="sc-card-ico">🎨</div>
+              <div>
+                <div class="sc-card-ttl">Appearance</div>
+                <div class="sc-card-sub">Colour theme, mode, and display density</div>
+              </div>
+            </div>
+            <div class="sc-card-body">
+
+              <!-- Light / Dark -->
+              <div class="swatches-label">Mode</div>
+              <div class="mode-grid" style="margin-bottom:24px">
+                <div class="mode-tile active" id="mode-dark" onclick="setMode('dark')">
+                  <span class="mode-tile-icon">🌙</span>
+                  <div><div class="mode-tile-label">Dark</div><div class="mode-tile-sub">Easy on the eyes</div></div>
+                </div>
+                <div class="mode-tile" id="mode-light" onclick="setMode('light')">
+                  <span class="mode-tile-icon">☀️</span>
+                  <div><div class="mode-tile-label">Light</div><div class="mode-tile-sub">Classic &amp; clean</div></div>
+                </div>
+              </div>
+
+              <!-- Colour Swatches -->
+              <div class="swatches-label">Accent Colour — click to change everything</div>
+              <div class="swatches-grid" id="swatches-grid"><!-- built by JS --></div>
+
+              <!-- Density & font -->
+              <div style="border-top:1px solid var(--border);padding-top:16px">
+                <div class="s-row">
+                  <div class="s-row-left"><div class="s-row-label">Table Density</div><div class="s-row-desc">Adjust spacing in result rows</div></div>
+                  <select class="s-select" onchange="setDensity(this.value)"><option value="normal" selected>Normal</option><option value="compact">Compact</option><option value="comfortable">Comfortable</option></select>
+                </div>
+                <div class="s-row">
+                  <div class="s-row-left"><div class="s-row-label">Font Size</div><div class="s-row-desc">Dashboard text scale</div></div>
+                  <select class="s-select" onchange="setFontSize(this.value)"><option value="13">Small</option><option value="14" selected>Medium</option><option value="16">Large</option></select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── DATABASE ── -->
+          <div class="sc-card">
+            <div class="sc-card-head">
+              <div class="sc-card-ico">🔗</div>
+              <div><div class="sc-card-ttl">Database Connection</div><div class="sc-card-sub">MongoDB host &amp; status</div></div>
+            </div>
+            <div class="sc-card-body">
+              <div class="conn-card">
+                <div class="conn-card-dot"></div>
+                <div class="conn-card-info">
+                  <div class="conn-card-host">localhost:27017 / company_db</div>
+                  <div class="conn-card-sub">Connected · 4 collections · 6,420 documents</div>
+                </div>
+                <button class="conn-card-btn" onclick="showToast('🔄 Reconnecting…')">Reconnect</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── QUERY SETTINGS ── -->
+          <div class="sc-card">
+            <div class="sc-card-head">
+              <div class="sc-card-ico">⚡</div>
+              <div><div class="sc-card-ttl">Query Settings</div><div class="sc-card-sub">Execution behaviour and smart features</div></div>
+            </div>
+            <div class="sc-card-body">
+              <div class="s-row">
+                <div class="s-row-left"><div class="s-row-label">Max Results per Query</div><div class="s-row-desc">Records returned per execution</div></div>
+                <select class="s-select" onchange="showToast('✅ Limit set to '+this.value)"><option>1,000</option><option>2,500</option><option selected>5,000</option><option>10,000</option></select>
+              </div>
+              <div class="s-row">
+                <div class="s-row-left"><div class="s-row-label">⚡ Query Cache</div><div class="s-row-desc">Cache results for faster repeats</div></div>
+                <div class="s-toggle" id="tog-cache" onclick="toggleSetting(this,'cache')"></div>
+              </div>
+              <div class="s-row">
+                <div class="s-row-left"><div class="s-row-label">💡 AI Suggestions</div><div class="s-row-desc">Show smart next-query tips</div></div>
+                <div class="s-toggle" id="tog-suggest" onclick="toggleSetting(this,'suggest')"></div>
+              </div>
+              <div class="s-row">
+                <div class="s-row-left"><div class="s-row-label">🔍 Show Raw Query</div><div class="s-row-desc">Display generated MongoDB code</div></div>
+                <div class="s-toggle" id="tog-rawq" onclick="toggleSetting(this,'rawq')"></div>
+              </div>
+              <div class="s-row" style="border-bottom:none">
+                <div class="s-row-left"><div class="s-row-label">🔔 Notifications</div><div class="s-row-desc">Alert when long queries finish</div></div>
+                <div class="s-toggle off" id="tog-notif" onclick="toggleSetting(this,'notif')"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── EXPORT & DATE ── -->
+          <div class="sc-card">
+            <div class="sc-card-head">
+              <div class="sc-card-ico">💾</div>
+              <div><div class="sc-card-ttl">Export &amp; Formatting</div><div class="sc-card-sub">Download options and date preferences</div></div>
+            </div>
+            <div class="sc-card-body">
+              <div class="s-row">
+                <div class="s-row-left"><div class="s-row-label">Default Export Format</div><div class="s-row-desc">Format when clicking ↓ download</div></div>
+                <select class="s-select" onchange="showToast('✅ Export format: '+this.value)"><option selected>JSON</option><option>CSV</option><option>Excel</option></select>
+              </div>
+              <div class="s-row">
+                <div class="s-row-left"><div class="s-row-label">Date Format</div><div class="s-row-desc">How dates appear in results</div></div>
+                <select class="s-select" onchange="showToast('✅ Date format: '+this.value)"><option>DD/MM/YYYY</option><option>MM/DD/YYYY</option><option selected>YYYY-MM-DD</option><option>ISO 8601</option></select>
+              </div>
+              <div class="s-row" style="border-bottom:none">
+                <div class="s-row-left"><div class="s-row-label">Timezone</div><div class="s-row-desc">For timestamp conversion</div></div>
+                <select class="s-select" onchange="showToast('✅ Timezone: '+this.value)"><option selected>UTC</option><option>US/Eastern</option><option>US/Pacific</option><option>Europe/London</option><option>Asia/Kolkata</option><option>Asia/Tokyo</option></select>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── ABOUT ── -->
+          <div class="sc-card">
+            <div class="sc-card-head">
+              <div class="sc-card-ico">ℹ️</div>
+              <div><div class="sc-card-ttl">About MongoQuery</div></div>
+            </div>
+            <div class="sc-card-body">
+              <div class="about-grid">
+                <div class="about-tile"><div class="about-tile-label">Version</div><div class="about-tile-val">v9.0.0</div></div>
+                <div class="about-tile"><div class="about-tile-label">Engine</div><div class="about-tile-val">ZeroShot AI</div></div>
+                <div class="about-tile"><div class="about-tile-label">Queries Run</div><div class="about-tile-val" id="about-qcount">0</div></div>
+                <div class="about-tile"><div class="about-tile-label">Active Theme</div><div class="about-tile-val" id="about-theme">Ocean</div></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div><!-- end settings -->
+
+    </main>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   THEME ENGINE — 8 colours × 2 modes = instant changes
+═══════════════════════════════════════════════════════ */
+const THEMES = [
+  { id:'cyan',    name:'Ocean',    sub:'Default blue',    ac:'#00d4ff', ac2:'#0096b7', acText:'#000', glow:'rgba(0,212,255,.15)',   dim:'rgba(0,212,255,.08)',   border:'rgba(0,212,255,.22)',   prev:'linear-gradient(135deg,#00d4ff,#0096b7)', dots:['#00d4ff','#6366f1','#10b981'] },
+  { id:'violet',  name:'Violet',   sub:'Deep purple',     ac:'#8b5cf6', ac2:'#6d28d9', acText:'#fff', glow:'rgba(139,92,246,.15)',  dim:'rgba(139,92,246,.08)',  border:'rgba(139,92,246,.22)',  prev:'linear-gradient(135deg,#8b5cf6,#6d28d9)', dots:['#8b5cf6','#f59e0b','#10b981'] },
+  { id:'emerald', name:'Forest',   sub:'Natural green',   ac:'#10b981', ac2:'#059669', acText:'#000', glow:'rgba(16,185,129,.15)',  dim:'rgba(16,185,129,.08)',  border:'rgba(16,185,129,.22)',  prev:'linear-gradient(135deg,#10b981,#059669)', dots:['#10b981','#00d4ff','#f59e0b'] },
+  { id:'rose',    name:'Rose',     sub:'Warm pink',       ac:'#f43f5e', ac2:'#be123c', acText:'#fff', glow:'rgba(244,63,94,.15)',   dim:'rgba(244,63,94,.08)',   border:'rgba(244,63,94,.22)',   prev:'linear-gradient(135deg,#f43f5e,#be123c)', dots:['#f43f5e','#f97316','#a78bfa'] },
+  { id:'amber',   name:'Amber',    sub:'Golden glow',     ac:'#f59e0b', ac2:'#d97706', acText:'#000', glow:'rgba(245,158,11,.15)',  dim:'rgba(245,158,11,.08)',  border:'rgba(245,158,11,.22)',  prev:'linear-gradient(135deg,#f59e0b,#d97706)', dots:['#f59e0b','#f43f5e','#10b981'] },
+  { id:'indigo',  name:'Indigo',   sub:'Electric blue',   ac:'#6366f1', ac2:'#4338ca', acText:'#fff', glow:'rgba(99,102,241,.15)',  dim:'rgba(99,102,241,.08)',  border:'rgba(99,102,241,.22)',  prev:'linear-gradient(135deg,#6366f1,#4338ca)', dots:['#6366f1','#00d4ff','#f59e0b'] },
+  { id:'orange',  name:'Sunset',   sub:'Vivid orange',    ac:'#f97316', ac2:'#ea580c', acText:'#fff', glow:'rgba(249,115,22,.15)',  dim:'rgba(249,115,22,.08)',  border:'rgba(249,115,22,.22)',  prev:'linear-gradient(135deg,#f97316,#ea580c)', dots:['#f97316','#f59e0b','#6366f1'] },
+  { id:'teal',    name:'Teal',     sub:'Blue-green',      ac:'#14b8a6', ac2:'#0d9488', acText:'#000', glow:'rgba(20,184,166,.15)',  dim:'rgba(20,184,166,.08)',  border:'rgba(20,184,166,.22)',  prev:'linear-gradient(135deg,#14b8a6,#0d9488)', dots:['#14b8a6','#6366f1','#f97316'] },
+];
+let activeTheme = 'cyan';
+let activeMode  = 'dark';
+let totalQueries = 0;
+
+/* ── Apply accent colour ── */
+function applyTheme(id) {
+  const t = THEMES.find(x => x.id === id);
+  if (!t) return;
+  activeTheme = id;
+  const r = document.documentElement.style;
+  r.setProperty('--ac',        t.ac);
+  r.setProperty('--ac2',       t.ac2);
+  r.setProperty('--ac-text',   t.acText);
+  r.setProperty('--ac-glow',   t.glow);
+  r.setProperty('--ac-dim',    t.dim);
+  r.setProperty('--ac-border', t.border);
+  /* mark selected swatch */
+  document.querySelectorAll('.swatch').forEach(s => s.classList.toggle('active', s.dataset.id === id));
+  /* update about tile */
+  const at = document.getElementById('about-theme');
+  if (at) at.textContent = t.name;
+  showToast('🎨 Theme: ' + t.name);
+  redrawCharts();
+}
+
+/* ── Apply light / dark mode ── */
+function setMode(mode) {
+  activeMode = mode;
+  document.documentElement.classList.toggle('light-mode', mode === 'light');
+  document.getElementById('mode-dark') .classList.toggle('active', mode === 'dark');
+  document.getElementById('mode-light').classList.toggle('active', mode === 'light');
+  showToast(mode === 'light' ? '☀️ Light mode' : '🌙 Dark mode');
+  redrawCharts();
+}
+
+/* ── Density ── */
+function setDensity(val) {
+  const map = {normal:'10px 12px', compact:'6px 10px', comfortable:'14px 16px'};
+  document.querySelectorAll('.dtable td, .dtable th').forEach(el => el.style.padding = map[val]);
+  showToast('✅ Density: ' + val);
+}
+
+/* ── Font size ── */
+function setFontSize(val) {
+  document.documentElement.style.fontSize = val + 'px';
+  showToast('✅ Font size: ' + val + 'px');
+}
+
+/* ── Toggle helper ── */
+function toggleSetting(el, key) {
+  el.classList.toggle('off');
+  const on = !el.classList.contains('off');
+  showToast((on ? '✅ Enabled: ' : '❌ Disabled: ') + key);
+}
+
+/* ── Build swatches ── */
+function buildSwatches() {
+  const grid = document.getElementById('swatches-grid');
+  if (!grid) return;
+  grid.innerHTML = THEMES.map(t => `
+    <div class="swatch${t.id === activeTheme ? ' active' : ''}" data-id="${t.id}" onclick="applyTheme('${t.id}')">
+      <div class="sw-preview" style="background:${t.prev}">
+        <div class="sw-bar"></div>
+        <div class="sw-dots">${t.dots.map(d=>`<div class="sw-dot" style="background:${d}"></div>`).join('')}</div>
+      </div>
+      <div class="sw-tick">✓</div>
+      <div class="sw-name">${t.name}</div>
+      <div class="sw-sub">${t.sub}</div>
+    </div>
+  `).join('');
+  /* sync mode buttons to current state */
+  const md = document.getElementById('mode-dark');
+  const ml = document.getElementById('mode-light');
+  if (md) md.classList.toggle('active', activeMode === 'dark');
+  if (ml) ml.classList.toggle('active', activeMode === 'light');
+}
+function updateAboutStats() {
+  const aq = document.getElementById('about-qcount');
+  if (aq) aq.textContent = totalQueries;
+  const at = document.getElementById('about-theme');
+  if (at) at.textContent = THEMES.find(t => t.id === activeTheme)?.name || 'Ocean';
+}
+
+/* ═══ STARS & PARTICLES ═══ */
+(function(){
+  const c=document.getElementById('stars-canvas'),ctx=c.getContext('2d');let W,H,stars=[];
+  function resize(){W=c.width=innerWidth;H=c.height=innerHeight;stars=[];for(let i=0;i<200;i++)stars.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.6+.2,a:Math.random(),da:.002+Math.random()*.008,dx:(Math.random()-.5)*.12,dy:-(Math.random()*.18+.04)})}
+  function draw(){ctx.clearRect(0,0,W,H);stars.forEach(s=>{s.x+=s.dx;s.y+=s.dy;s.a+=s.da;if(s.a>1||s.a<0)s.da*=-1;if(s.y<-5){s.y=H+5;s.x=Math.random()*W}ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle=`rgba(255,255,255,${s.a*.8})`;ctx.fill()});requestAnimationFrame(draw)}
+  resize();addEventListener('resize',resize);draw();
+})();
+(function(){
+  const auth=document.getElementById('auth-layer');
+  const cols=['rgba(0,212,255,.7)','rgba(99,102,241,.8)','rgba(16,185,129,.6)','rgba(255,255,255,.5)','rgba(163,139,250,.7)'];
+  for(let i=0;i<32;i++){const p=document.createElement('div');p.className='particle';const sz=Math.random()*5+2;p.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;bottom:${Math.random()*15}%;background:${cols[~~(Math.random()*cols.length)]};animation-duration:${4+Math.random()*9}s;animation-delay:-${Math.random()*12}s;box-shadow:0 0 ${sz*2}px ${cols[~~(Math.random()*cols.length)]}`;auth.appendChild(p)}
+  for(let i=0;i<7;i++){const r=document.createElement('div');r.className='ring';const sz=50+Math.random()*180;r.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-duration:${3+Math.random()*5}s;animation-delay:-${Math.random()*6}s`;auth.appendChild(r)}
+})();
+
+/* ═══ AUTH ═══ */
+const userStore={};
+function showSignup(){const l=document.getElementById('login-page'),s=document.getElementById('signup-page');l.classList.add('page-hidden');s.classList.remove('page-hidden');s.classList.add('page-enter');setTimeout(()=>s.classList.remove('page-enter'),400)}
+function showLogin(){const l=document.getElementById('login-page'),s=document.getElementById('signup-page');s.classList.add('page-hidden');l.classList.remove('page-hidden');l.classList.add('page-enter');setTimeout(()=>l.classList.remove('page-enter'),400)}
+function doLogin(){
+  const u=document.getElementById('l-user').value.trim(),p=document.getElementById('l-pass').value;
+  const err=document.getElementById('login-err');
+  if(!u||!p){err.textContent='Please fill in both fields';err.classList.add('show');return}
+  err.classList.remove('show');enterDashboard(u);
+}
+function doSignup(){
+  const u=document.getElementById('s-user').value.trim(),e=document.getElementById('s-email').value.trim(),p=document.getElementById('s-pass').value,p2=document.getElementById('s-pass2').value;
+  const err=document.getElementById('signup-err');
+  if(!u||!e||!p||!p2){err.textContent='Please fill in all fields';err.classList.add('show');return}
+  if(p!==p2){err.textContent='Passwords do not match';err.classList.add('show');return}
+  if(p.length<6){err.textContent='Password must be at least 6 characters';err.classList.add('show');return}
+  userStore[u]=p;err.classList.remove('show');enterDashboard(u);
+}
+function enterDashboard(username){
+  document.getElementById('uav').textContent=username[0].toUpperCase();
+  document.getElementById('uname').textContent=username;
+  const al=document.getElementById('auth-layer'),dl=document.getElementById('dashboard-layer');
+  al.style.transition='opacity .7s,transform .7s';al.style.opacity='0';al.style.transform='scale(1.04)';
+  setTimeout(()=>{al.style.display='none';dl.classList.add('active');buildSwatches();initDashboard();showToast('👋 Welcome, '+username+'!')},680);
+}
+function doLogout(){
+  const al=document.getElementById('auth-layer'),dl=document.getElementById('dashboard-layer');
+  dl.classList.remove('active');al.style.display='';al.style.opacity='0';al.style.transform='scale(1.04)';
+  requestAnimationFrame(()=>{al.style.transition='opacity .6s,transform .6s';al.style.opacity='1';al.style.transform='none'});showLogin();
+}
+document.getElementById('l-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+document.getElementById('s-pass2').addEventListener('keydown',e=>{if(e.key==='Enter')doSignup()});
+const ss=document.createElement('style');ss.textContent='@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}';document.head.appendChild(ss);
+
+/* ═══ DASHBOARD NAV ═══ */
+let queryHistoryData=[];
+function switchSection(id,el){
+  document.querySelectorAll('.dashboard-section').forEach(s=>s.style.display='none');
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('act'));
+  const sec=document.getElementById('section-'+id);
+  if(sec){
+    if(id==='query-generator') sec.style.display='flex';
+    else sec.style.display='block';
+  }
+  if(el)el.classList.add('act');
+  document.getElementById('ms').scrollTop=0;
+  if(id==='settings'){buildSwatches();updateAboutStats();}
+}
+function addToHistory(q,count){
+  queryHistoryData.unshift({q,count,time:new Date().toLocaleTimeString()});
+  if(queryHistoryData.length>20)queryHistoryData.pop();
+  const list=document.getElementById('query-history-list');
+  list.innerHTML=queryHistoryData.map(item=>`
+    <div class="qh-item" onclick="sq('${item.q.replace(/'/g,"\\'")}');switchSection('query-generator',document.querySelector('[data-section=query-generator]'));runQuery()">
+      <div><div class="qh-q">${item.q}</div><div class="qh-meta">${item.time} · ${item.count} records</div></div>
+      <div class="qh-replay">↻</div>
+    </div>`).join('');
+  totalQueries++;
+  const aq=document.getElementById('about-qcount');
+  if(aq)aq.textContent=totalQueries;
+}
+
+/* ═══ FILE UPLOAD ═══ */
+let uploadedFiles=[],activeFileIndex=-1,parsedData=null;
+const FILE_ICONS={csv:'📊',json:'📋',xlsx:'📈',xls:'📈',xml:'🔖',yaml:'⚙️',yml:'⚙️',default:'📁'};
+const FILE_COLORS={csv:'csv',json:'json',xlsx:'xlsx',xls:'xlsx'};
+function getExt(n){return n.split('.').pop().toLowerCase()}
+function fmtSize(b){if(b<1024)return b+'B';if(b<1048576)return(b/1024).toFixed(1)+'KB';return(b/1048576).toFixed(1)+'MB'}
+function handleDragOver(e){e.preventDefault();document.getElementById('drop-zone').classList.add('drag-over')}
+function handleDragLeave(){document.getElementById('drop-zone').classList.remove('drag-over')}
+function handleDrop(e){e.preventDefault();document.getElementById('drop-zone').classList.remove('drag-over');processFiles([...e.dataTransfer.files])}
+function handleFileInput(e){processFiles([...e.target.files]);e.target.value=''}
+function processFiles(files){files.forEach(file=>{const ext=getExt(file.name);const entry={id:Date.now()+Math.random(),name:file.name,ext,size:file.size,file,data:null,status:'loading'};uploadedFiles.push(entry);renderStrip();parseFile(entry)})}
+function parseFile(entry){
+  const bar=document.getElementById('parse-bar'),fill=document.getElementById('parse-fill');
+  bar.classList.add('show');let prog=0;const iv=setInterval(()=>{prog=Math.min(prog+Math.random()*15,90);fill.style.width=prog+'%'},80);
+  if(['xlsx','xls'].includes(entry.ext)){clearInterval(iv);fill.style.width='100%';setTimeout(()=>{bar.classList.remove('show');fill.style.width='0%'},600);entry.data=genSimData(entry);entry.status='ready';renderStrip();updateSidebar();if(activeFileIndex===-1)setActiveFile(uploadedFiles.indexOf(entry));showToast('✅ '+entry.name+' ('+entry.data.length+' records)');log('s','Loaded: '+entry.name);return}
+  const reader=new FileReader();
+  reader.onload=function(e){
+    clearInterval(iv);fill.style.width='100%';setTimeout(()=>{bar.classList.remove('show');fill.style.width='0%'},600);
+    try{
+      if(entry.ext==='csv'||entry.ext==='tsv'){entry.data=parseCSV(e.target.result);entry.status='ready'}
+      else if(entry.ext==='json'){entry.data=JSON.parse(e.target.result);if(!Array.isArray(entry.data))entry.data=[entry.data];entry.status='ready'}
+      else if(entry.ext==='txt'){entry.data=e.target.result.trim().split('\n').map((l,i)=>({line:i+1,content:l.trim()})).filter(r=>r.content);entry.status='ready'}
+      else{entry.data=[{info:'File: '+entry.name,type:entry.ext,size:fmtSize(entry.size)}];entry.status='ready'}
+    }catch(err){entry.data=[{error:'Parse error',message:err.message}];entry.status='error'}
+    renderStrip();updateSidebar();if(activeFileIndex===-1)setActiveFile(uploadedFiles.indexOf(entry));
+    showToast('✅ '+entry.name+' ('+entry.data.length+' records)');log('s','Loaded: '+entry.name+' — '+entry.data.length+' records');
+  };
+  reader.readAsText(entry.file);
+}
+function parseCSV(text){const lines=text.trim().split('\n').filter(l=>l.trim());if(lines.length<2)return[];const hdrs=lines[0].split(',').map(h=>h.trim().replace(/"/g,''));return lines.slice(1).map(line=>{const vals=line.split(',').map(v=>v.trim().replace(/"/g,''));const obj={};hdrs.forEach((h,i)=>{const n=parseFloat(vals[i]);obj[h]=isNaN(n)?vals[i]||'':n});return obj})}
+function genSimData(entry){if(entry.ext==='pdf')return[{page:1,section:'Introduction',content:'Extracted from '+entry.name,chars:450},{page:1,section:'Summary',content:'Key findings section',chars:320},{page:2,section:'Data',content:'Main data content',chars:680}];const depts=['Engineering','Sales','Marketing','HR','Finance'];return Array.from({length:20},(_,i)=>({id:'R'+String(i+1).padStart(3,'0'),name:'Record '+(i+1),department:depts[i%depts.length],value:Math.round(Math.random()*100000),date:'2024-'+String(Math.ceil(Math.random()*12)).padStart(2,'0')+'-01',status:Math.random()>.3?'Active':'Inactive'}))}
+function setActiveFile(idx){activeFileIndex=idx;if(idx>=0&&idx<uploadedFiles.length){const f=uploadedFiles[idx];parsedData=f.data;document.getElementById('q-src').textContent='db.'+f.name.replace(/\.[^.]+$/,'');document.getElementById('tb-coll').textContent=f.name.replace(/\.[^.]+$/,'');updateChips(f)}else{parsedData=null;document.getElementById('q-src').textContent='db.employees';document.getElementById('tb-coll').textContent='employees'}renderStrip()}
+function updateChips(f){if(!f.data||!f.data.length)return;const keys=Object.keys(f.data[0]).slice(0,4);document.getElementById('chips').innerHTML=`<div class="chip" onclick="sq('Show all records')">📋 Show All</div><div class="chip" onclick="sq('Count records')">🔢 Count</div>${keys.map(k=>`<div class="chip" onclick="sq('Show ${k} values')">${k}</div>`).join('')}`}
+function renderStrip(){const strip=document.getElementById('uploaded-strip');if(!uploadedFiles.length){strip.innerHTML='';return}strip.innerHTML=uploadedFiles.map((f,i)=>`<div class="ufile${i===activeFileIndex?' active-file':''}" onclick="setActiveFile(${i})"><span class="ufile-icon">${FILE_ICONS[f.ext]||FILE_ICONS.default}</span><span class="ufile-name">${f.name}</span><span class="ufile-size">${fmtSize(f.size)}</span>${i===activeFileIndex?'<span class="ufile-active-badge">ACTIVE</span>':''}<span class="ufile-del" onclick="removeFile(event,${i})">✕</span></div>`).join('')}
+function removeFile(e,idx){e.stopPropagation();uploadedFiles.splice(idx,1);if(activeFileIndex===idx){activeFileIndex=uploadedFiles.length>0?0:-1;setActiveFile(activeFileIndex)}else if(activeFileIndex>idx)activeFileIndex--;renderStrip();updateSidebar();showToast('🗑️ File removed')}
+function updateSidebar(){const panel=document.getElementById('ds-panel'),list=document.getElementById('ds-list');if(!uploadedFiles.length){panel.style.display='none';return}panel.style.display='block';list.innerHTML=uploadedFiles.map((f,i)=>`<div class="ds-item${i===activeFileIndex?' active-src':''}" onclick="setActiveFile(${i})"><div class="ds-icon ${FILE_COLORS[f.ext]||''}">${FILE_ICONS[f.ext]||'📁'}</div><div class="ds-name" title="${f.name}">${f.name}</div><div class="ds-remove" onclick="removeFile(event,${i})">✕</div></div>`).join('')}
+
+/* ═══ QUERY ENGINE ═══ */
+const EMP=[
+  {id:"E091",name:"Noah Adams",dept:"Engineering",salary:88000,hired:"2023-08-14",status:"Active"},
+  {id:"E038",name:"Grace Patel",dept:"Sales",salary:62000,hired:"2023-02-14",status:"Active"},
+  {id:"E015",name:"David Lee",dept:"Sales",salary:65000,hired:"2022-11-01",status:"Active"},
+  {id:"E082",name:"Mia Turner",dept:"Marketing",salary:71000,hired:"2022-10-05",status:"Active"},
+  {id:"E074",name:"Liam Chen",dept:"Finance",salary:76000,hired:"2022-04-19",status:"Active"},
+  {id:"E067",name:"Olivia Brown",dept:"Operations",salary:69000,hired:"2021-09-28",status:"Active"},
+  {id:"E004",name:"Bob Martinez",dept:"Sales",salary:64000,hired:"2021-07-08",status:"Inactive"},
+  {id:"E012",name:"Alice Johnson",dept:"Engineering",salary:87000,hired:"2019-03-11",status:"Active"},
+  {id:"E033",name:"Carol White",dept:"Engineering",salary:91200,hired:"2018-07-22",status:"Active"},
+  {id:"E055",name:"Grace Kim",dept:"Engineering",salary:94500,hired:"2016-01-15",status:"Active"},
+  {id:"E021",name:"Frank Brown",dept:"HR",salary:55000,hired:"2017-05-30",status:"Active"},
+  {id:"E044",name:"Maria Garcia",dept:"Marketing",salary:75000,hired:"2018-11-12",status:"Active"},
+  {id:"E009",name:"Henry Park",dept:"Marketing",salary:68000,hired:"2021-03-04",status:"Inactive"},
+  {id:"E077",name:"Karen Taylor",dept:"Engineering",salary:89000,hired:"2020-06-18",status:"Active"},
+  {id:"E022",name:"James Wilson",dept:"HR",salary:52000,hired:"2023-01-09",status:"Active"},
+];
+
+function queryUploadedData(raw){
+  if(!parsedData||!parsedData.length)return null;
+  const k=raw.toLowerCase();
+  if(k.includes('all')||k.includes('show')||k.includes('list'))return{res:parsedData.slice(0,100),label:'All Records',code:`db.collection.find({}).limit(100)`,op:'find()',conf:94,time:Math.round(5+Math.random()*20)+'ms',idx:'COLLSCAN'};
+  if(k.includes('count')){const keys=Object.keys(parsedData[0]||{});const gk=keys.find(k2=>typeof parsedData[0][k2]==='string')||keys[0];const m={};parsedData.forEach(r=>{const v=r[gk]||'?';m[v]=(m[v]||0)+1});return{res:Object.entries(m).map(([k2,c])=>({[gk]:k2,count:c})).sort((a,b)=>b.count-a.count),label:'Count by '+gk,code:`db.collection.aggregate([{$group:{_id:"$${gk}",count:{$sum:1}}}])`,op:'aggregate()',conf:92,time:Math.round(8+Math.random()*15)+'ms',idx:'COLLSCAN'}}
+  const words=raw.split(' ').filter(w=>w.length>2);let res=parsedData;words.forEach(word=>{res=res.filter(row=>Object.values(row).some(v=>String(v).toLowerCase().includes(word.toLowerCase())))});
+  if(res.length>0)return{res,label:'Search: '+raw.slice(0,30),code:`db.collection.find({$text:{$search:"${raw}"}})`,op:'find()',conf:82,time:Math.round(10+Math.random()*25)+'ms',idx:'TEXT'};
+  return{res:parsedData.slice(0,50),label:'Top 50 records',code:`db.collection.find({}).limit(50)`,op:'find()',conf:60,time:Math.round(6+Math.random()*12)+'ms',idx:'COLLSCAN'};
+}
+
+function queryDemoData(raw){
+  const k=raw.toLowerCase();const t=(10+Math.floor(Math.random()*25))+'ms';
+  if(k.includes('top')||k.includes('highest')||k.includes('paid')||(k.includes('salary')&&!k.includes('avg')&&!k.includes('average'))){const n=parseInt(k.match(/\d+/)?.[0])||5;const res=[...EMP].sort((a,b)=>b.salary-a.salary).slice(0,n);return{res,op:'find()',time:t,conf:97,idx:'salary_idx',codeHtml:`<span class="fn">find</span>({}).<span class="fn">sort</span>({<span class="str">"salary"</span>:<span class="op">-1</span>}).<span class="fn">limit</span>(<span class="op">${n}</span>)`,expl:{q:`Top ${n} highest paid`,qs:'Sorted by salary descending',steps:[{h:'Sorted by salary',d:'All employees ranked descending.'},{h:'Limited',d:`Returned top ${n}.`}],found:r=>`Top earner: <span class="hl">${r[0]?.name}</span> at <span class="hl">$${r[0]?.salary?.toLocaleString()}</span>.`,insights:r=>[{i:'💰',t:`Avg top salary: $${Math.round(r.reduce((s,e)=>s+e.salary,0)/r.length).toLocaleString()}`},{i:'🏆',t:`Highest: ${r[0]?.name} (${r[0]?.dept})`}],next:['Count by department','Hired after 2020','Average salary per dept']}}}
+  if(k.includes('count')||k.includes('group')||(k.includes('dept')&&!k.includes('avg')&&!k.includes('find')&&!k.includes('all'))){const counts={};EMP.forEach(e=>{counts[e.dept]=(counts[e.dept]||0)+1});const res=Object.entries(counts).map(([dept,count])=>({department:dept,count})).sort((a,b)=>b.count-a.count);return{res,op:'aggregate()',time:t,conf:98,idx:'dept_idx',codeHtml:`<span class="fn">aggregate</span>([{<span class="kw">$group</span>:{_id:<span class="str">"$dept"</span>,count:{<span class="kw">$sum</span>:1}}},{<span class="kw">$sort</span>:{count:<span class="op">-1</span>}}])`,expl:{q:'Count by department',qs:'Grouped and counted per department',steps:[{h:'$group',d:'Grouped by dept field.'},{h:'$sum',d:'Counted per group.'},{h:'$sort',d:'Sorted by count.'}],found:r=>`<span class="hl">${r[0]?.department}</span> is largest with <span class="hl">${r[0]?.count}</span> people.`,insights:r=>[{i:'🏢',t:`${r.length} departments`},{i:'👥',t:`Largest: ${r[0]?.department} (${r[0]?.count})`}],next:['Average salary per dept','Top 5 highest paid','Find all in Sales']}}}
+  if(k.includes('avg')||k.includes('average')){const ds={};EMP.forEach(e=>{if(!ds[e.dept])ds[e.dept]={sum:0,count:0};ds[e.dept].sum+=e.salary;ds[e.dept].count++});const res=Object.entries(ds).map(([dept,v])=>({department:dept,avg_salary:Math.round(v.sum/v.count),headcount:v.count})).sort((a,b)=>b.avg_salary-a.avg_salary);return{res,op:'aggregate()',time:t,conf:99,idx:'salary_idx',codeHtml:`<span class="fn">aggregate</span>([{<span class="kw">$group</span>:{_id:<span class="str">"$dept"</span>,avg:{<span class="kw">$avg</span>:<span class="str">"$salary"</span>}}}])`,expl:{q:'Average salary per dept',qs:'$avg per department',steps:[{h:'$group by dept',d:'Grouped employees.'},{h:'$avg salary',d:'Mean salary per group.'},{h:'$sort',d:'Highest paying first.'}],found:r=>`<span class="hl">${r[0]?.department}</span> pays most: <span class="hl">$${r[0]?.avg_salary?.toLocaleString()}</span>.`,insights:r=>[{i:'💵',t:`Highest: ${r[0]?.department} $${r[0]?.avg_salary?.toLocaleString()}`},{i:'📉',t:`Lowest: ${r[r.length-1]?.department} $${r[r.length-1]?.avg_salary?.toLocaleString()}`}],next:['Top 5 highest paid','Count by department','Find all in Sales']}}}
+  const deptMatch=k.match(/engineering|sales|marketing|hr|finance|operations/);
+  if(deptMatch||k.includes('find all')||k.includes('filter')){const dept=deptMatch?deptMatch[0].replace(/^\w/,c=>c.toUpperCase()):null;const res=dept?EMP.filter(e=>e.dept.toLowerCase()===dept.toLowerCase()):EMP;return{res,op:'find()',time:t,conf:96,idx:'dept_idx',codeHtml:`<span class="fn">find</span>({<span class="str">"dept"</span>:<span class="str">"${dept||'*'}"</span>})`,expl:{q:dept?`Find all in ${dept}`:'Show all',qs:dept?`Dept === "${dept}"`:'All records',steps:[{h:'Filter',d:dept?`dept === "${dept}"`:'No filter.'},{h:'Return',d:`${res.length} found.`}],found:r=>`<span class="hl">${r.length} employees</span>${dept?' in <span class="hl">'+dept+'</span>':''}.`,insights:r=>[{i:'👥',t:`${r.length} employees`},{i:'💰',t:`Avg salary: $${Math.round(r.reduce((s,e)=>s+e.salary,0)/(r.length||1)).toLocaleString()}`}],next:['Top 5 highest paid','Count by department','Average salary per dept']}}}
+  const yearMatch=k.match(/after\s+(\d{4})|since\s+(\d{4})|(\d{4})/);
+  if(k.includes('hire')||k.includes('joined')||k.includes('after')||yearMatch){const year=yearMatch?parseInt(yearMatch[1]||yearMatch[2]||yearMatch[3]):2020;const res=EMP.filter(e=>parseInt(e.hired.slice(0,4))>year);return{res,op:'find()',time:t,conf:95,idx:'hire_date_idx',codeHtml:`<span class="fn">find</span>({<span class="str">"hired"</span>:{<span class="kw">$gt</span>:<span class="str">"${year}-01-01"</span>}})`,expl:{q:`Hired after ${year}`,qs:`Employees who joined after ${year}`,steps:[{h:'Date filter',d:`$gt "${year}-01-01".`},{h:'Index scan',d:'hire_date_idx used.'}],found:r=>`<span class="hl">${r.length} employees</span> hired after ${year}.`,insights:r=>[{i:'📅',t:`${r.length} hired after ${year}`},{i:'🆕',t:`Most recent: ${[...r].sort((a,b)=>b.hired.localeCompare(a.hired))[0]?.name||'-'}`}],next:['Count by department','Top 5 highest paid','Average salary per dept']}}}
+  return{res:[...EMP],op:'find()',time:t,conf:90,idx:'COLLSCAN',codeHtml:`<span class="fn">find</span>({}).<span class="fn">limit</span>(<span class="op">25</span>)`,expl:{q:raw||'Show all',qs:'All documents from employees',steps:[{h:'No filter',d:'Empty {} matches all.'},{h:'Return',d:'All documents returned.'}],found:r=>`<span class="hl">${r.length} employees</span> returned.`,insights:r=>[{i:'👥',t:`Total: ${r.length}`},{i:'🏢',t:'6 departments'}],next:['Top 5 highest paid','Count by department','Hired after 2020','Average salary per dept']}};
+}
+
+let lastRes=[],execTimes=[22,15,30,17,40,12,25,19,34,18],mc={find:0,agg:0};
+const delay=ms=>new Promise(r=>setTimeout(r,ms));
+
+function rPipe(){for(let i=1;i<=6;i++){const el=document.getElementById('p'+i);el.className='pi pend';el.textContent='○';document.getElementById('l'+i).className='pl'}}
+async function animPipe(){document.getElementById('pipe').classList.add('on');rPipe();for(let i=1;i<=6;i++){const el=document.getElementById('p'+i);el.className='pi run';el.textContent='⟳';await delay(200);el.className='pi done';el.textContent='✓';document.getElementById('l'+i).className='pl done';await delay(80)}}
+
+function log(type,msg){const body=document.getElementById('lb');document.getElementById('lp').classList.add('on');const t=new Date().toTimeString().slice(0,8);const d=document.createElement('div');d.className='ll';d.innerHTML=`<span class="ltm">${t}</span><span class="l${type}">[${type==='i'?'INFO':type==='s'?'SUCCESS':'WARN'}]</span><span class="lm">${msg}</span>`;body.appendChild(d);body.scrollTop=body.scrollHeight}
+
+function renderTable(data){if(!data||!data.length)return;const keys=Object.keys(data[0]);document.getElementById('th').innerHTML='<tr>'+keys.map(k=>`<th>${k.replace(/_/g,' ').toUpperCase()}</th>`).join('')+'</tr>';document.getElementById('tb').innerHTML=data.slice(0,200).map(row=>'<tr>'+keys.map(k=>{const v=row[k];if(k==='dept'||k==='department')return`<td><span class="tdept">${v}</span></td>`;if(k==='status')return`<td><span class="${v==='Active'?'tact':'tina'}">${v==='Active'?'● Active':'○ Inactive'}</span></td>`;if(k==='salary'||k==='avg_salary'||k==='value')return`<td style="color:var(--ac)">$${Number(v).toLocaleString()}</td>`;return`<td>${v}</td>`}).join('')+'</tr>').join('')}
+
+function renderExpl(cfg,r){if(!cfg||!cfg.steps)return;const sh=cfg.steps.map(s=>`<div class="estep"><div class="enum">✓</div><div class="ebody"><div class="ehead">${s.h}</div><div class="edesc">${s.d}</div></div></div>`).join('');const ih=(cfg.insights?cfg.insights(r):[]).map(i=>`<div class="ins"><span style="flex-shrink:0;font-size:14px">${i.i}</span><span>${i.t}</span></div>`).join('');const nh=(cfg.next||[]).map(q=>`<button class="nbtn" onclick="sq('${q}');runQuery()">→ ${q}</button>`).join('');document.getElementById('eg').innerHTML=`<div class="ehero"><div class="ehero-lbl">🙋 What You Asked</div><div class="ehero-q">${cfg.q||'Query'}</div><div class="ehero-sub">${cfg.qs||''}</div></div><div class="esteps"><div class="esteps-ttl">⚙️ How We Found It</div>${sh}</div><div class="efound"><div class="efound-ttl">📋 What We Found</div><div class="efound-txt">${cfg.found?cfg.found(r):'<span class="hl">'+r.length+' records</span> returned.'}</div><div style="margin-top:14px">${ih}</div></div>${nh?`<div class="enext"><div class="enext-ttl">💬 Ask Next</div><div class="ngrid">${nh}</div></div>`:''}`; document.getElementById('expl').classList.add('on')}
+
+function drawDonut(){const c=document.getElementById('dc'),ctx=c.getContext('2d');const vals=[Math.max(mc.find,1),Math.max(mc.agg,1),1,1],total=vals.reduce((a,b)=>a+b,0);const cols=[getComputedStyle(document.documentElement).getPropertyValue('--ac').trim(),'#6366f1','#f59e0b','#a78bfa'],labels=['find()','aggregate()','insert()','update()'];ctx.clearRect(0,0,c.width,c.height);let a=-Math.PI/2;const cx=110,cy=115,r=85,ri=52;vals.forEach((v,i)=>{const s=(v/total)*Math.PI*2;ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,a,a+s);ctx.closePath();ctx.fillStyle=cols[i];ctx.fill();a+=s});ctx.beginPath();ctx.arc(cx,cy,ri,0,Math.PI*2);ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--bg2').trim()||'#0e1420';ctx.fill();labels.forEach((l,i)=>{const lx=230,ly=55+i*32;ctx.fillStyle=cols[i];ctx.fillRect(lx,ly,12,12);ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--muted').trim()||'#64748b';ctx.font='12px Outfit';ctx.fillText(l,lx+18,ly+11)})}
+
+function drawLine(){const c=document.getElementById('lc'),ctx=c.getContext('2d');const W=c.width,H=c.height,pad=40,mn=8,mx=48;ctx.clearRect(0,0,W,H);const pts=execTimes.map((v,i)=>({x:pad+(i/(execTimes.length-1))*(W-pad*2),y:H-pad-((v-mn)/(mx-mn))*(H-pad*2)}));const cs=getComputedStyle(document.documentElement);const acColor=cs.getPropertyValue('--ac').trim();const dimColor=cs.getPropertyValue('--dim').trim()||'#334155';[10,20,30,40].forEach(v=>{const y=H-pad-((v-mn)/(mx-mn))*(H-pad*2);ctx.strokeStyle=dimColor+'44';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(W-pad,y);ctx.stroke();ctx.fillStyle=dimColor;ctx.font='10px JetBrains Mono';ctx.fillText(v+'ms',2,y+4)});execTimes.forEach((_,i)=>{const x=pad+(i/(execTimes.length-1))*(W-pad*2);ctx.fillStyle=dimColor;ctx.font='10px JetBrains Mono';ctx.fillText('Q'+(i+1),x-7,H-6)});ctx.beginPath();ctx.moveTo(pts[0].x,H-pad);pts.forEach(p=>ctx.lineTo(p.x,p.y));ctx.lineTo(pts[pts.length-1].x,H-pad);ctx.closePath();ctx.fillStyle=acColor+'18';ctx.fill();ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.strokeStyle=acColor;ctx.lineWidth=2.5;ctx.stroke();pts.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,4,0,Math.PI*2);ctx.fillStyle=acColor;ctx.fill();ctx.strokeStyle=cs.getPropertyValue('--bg2').trim()||'#0e1420';ctx.lineWidth=2;ctx.stroke()})}
+
+function redrawCharts(){setTimeout(()=>{if(document.getElementById('dc'))drawDonut();if(document.getElementById('lc'))drawLine()},50)}
+
+function st2(tab,el){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('act'));el.classList.add('act');document.getElementById('tt').style.display=tab==='t'?'block':'none';document.getElementById('tj').style.display=tab==='j'?'block':'none'}
+
+async function runQuery(){
+  const raw=document.getElementById('qi').value.trim();if(!raw)return;
+  ['cb','sc','expl','rs','cg'].forEach(id=>document.getElementById(id).classList.remove('on'));
+  document.getElementById('lb').innerHTML='';
+  const btn=document.getElementById('rb');btn.classList.add('ld');btn.innerHTML='⏳ Running…';
+  let uploadResult=null;
+  if(parsedData&&parsedData.length){uploadResult=queryUploadedData(raw);log('i',`Source: ${uploadedFiles[activeFileIndex]?.name||'file'}`)}
+  else{log('i','Source: employees collection (demo)')}
+  log('i',`Query: "${raw}"`);
+  await animPipe();await delay(180);
+  let res=[];
+  if(uploadResult){
+    res=uploadResult.res;lastRes=res;
+    const t=uploadResult.time||'12ms';execTimes.push(parseInt(t));if(execTimes.length>10)execTimes.shift();
+    if(uploadResult.op.startsWith('find'))mc.find++;else mc.agg++;
+    document.getElementById('cop').textContent=uploadResult.op;
+    document.getElementById('csum').textContent=uploadResult.code.slice(0,60)+'…';
+    document.getElementById('cd').innerHTML=`<span class="fn">${uploadResult.code.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</span>`;
+    document.getElementById('cb').classList.add('on');
+    document.getElementById('sd').textContent=res.length;document.getElementById('sf').textContent=uploadResult.conf+'%';
+    document.getElementById('st').textContent=t;document.getElementById('si').textContent=uploadResult.idx;
+    document.getElementById('sc').classList.add('on');
+    renderExpl({q:uploadResult.label,qs:`File: ${uploadedFiles[activeFileIndex]?.name}`,steps:[{h:'File loaded',d:`${parsedData.length} records parsed.`},{h:'Query applied',d:`Matched "${raw}" against fields.`},{h:'Results returned',d:`${res.length} records found.`}],found:r=>`<span class="hl">${r.length} records</span> from <span class="hl">${uploadedFiles[activeFileIndex]?.name}</span>.`,insights:r=>[{i:'📁',t:`Source: ${uploadedFiles[activeFileIndex]?.name}`},{i:'📊',t:`${res.length}/${parsedData.length} matched (${Math.round(res.length/parsedData.length*100)}%)`}]},res);
+    log('s',`Done in ${t} — ${res.length} records from file`);
+  } else {
+    try{
+      const start=performance.now();
+      const response=await fetch(`http://127.0.0.1:8000/query?user_query=${encodeURIComponent(raw)}`);
+      const data=await response.json();const execTime=Math.round(performance.now()-start)+'ms';
+      res=data.result||[];lastRes=res;execTimes.push(parseInt(execTime));if(execTimes.length>10)execTimes.shift();mc.find++;
+      document.getElementById('cop').textContent=data.mongo_query?.find||'query';
+      document.getElementById('csum').textContent=data.summary||'Query executed';
+      document.getElementById('cd').innerHTML=`<span class="fn">${JSON.stringify(data.mongo_query,null,2)}</span>`;
+      document.getElementById('cb').classList.add('on');
+      document.getElementById('sd').textContent=res.length;document.getElementById('sf').textContent='95%';document.getElementById('st').textContent=execTime;document.getElementById('si').textContent='MongoDB';
+      document.getElementById('sc').classList.add('on');
+      renderExpl({q:raw,qs:'Backend MongoDB query',steps:[{h:'Intent detected',d:`${data.intent}`},{h:'Collection',d:`${data.collection}`},{h:'Executed',d:`${res.length} documents returned.`}],found:r=>`${r.length} records returned.`,insights:r=>[{i:'🍃',t:`Collection: ${data.collection}`}]},res);
+      log('s',`Backend — ${res.length} docs in ${execTime}`);
+    }catch(err){
+      const demo=queryDemoData(raw);res=demo.res;lastRes=res;
+      execTimes.push(parseInt(demo.time));if(execTimes.length>10)execTimes.shift();
+      if(demo.op.startsWith('find'))mc.find++;else mc.agg++;
+      document.getElementById('cop').textContent=demo.op;
+      document.getElementById('csum').textContent='— employees (demo mode)';
+      document.getElementById('cd').innerHTML=`<span class="kw">db</span>.<span class="fn">employees</span>.${demo.codeHtml}`;
+      document.getElementById('cb').classList.add('on');
+      document.getElementById('sd').textContent=res.length;document.getElementById('sf').textContent=demo.conf+'%';document.getElementById('st').textContent=demo.time;document.getElementById('si').textContent=demo.idx;
+      document.getElementById('sc').classList.add('on');
+      renderExpl(demo.expl,res);
+      log('s',`Demo — ${res.length} records in ${demo.time}`);
+    }
+  }
+  document.getElementById('rc').textContent=res.length+' records';
+  renderTable(res);
+  document.getElementById('jp').textContent=JSON.stringify(res.slice(0,50),null,2);
+  document.getElementById('rs').classList.add('on');
+  document.getElementById('tt').style.display='block';document.getElementById('tj').style.display='none';
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('act',i===0));
+  document.getElementById('cg').classList.add('on');
+  setTimeout(()=>{drawDonut();drawLine()},80);
+  btn.classList.remove('ld');btn.innerHTML='⚡ Generate + Run';
+  document.getElementById('ms').scrollTop=250;
+  addToHistory(raw,res.length);
+}
+
+function initDashboard(){
+  switchSection('query-generator',document.querySelector('[data-section="query-generator"]'));
+  document.getElementById('pipe').classList.add('on');
+  for(let i=1;i<=6;i++){document.getElementById('p'+i).textContent='✓';document.getElementById('p'+i).className='pi done';document.getElementById('l'+i).className='pl done'}
+  document.getElementById('sc').classList.add('on');
+  document.getElementById('sd').textContent='1,240';document.getElementById('sf').textContent='98%';document.getElementById('st').textContent='12ms';document.getElementById('si').textContent='IDX';
+  document.getElementById('cb').classList.add('on');
+  document.getElementById('cop').textContent='find()';document.getElementById('csum').textContent='— employees collection';
+  document.getElementById('cd').innerHTML=`<span class="kw">db</span>.<span class="fn">employees</span>.<span class="fn">find</span>({}).<span class="fn">sort</span>({<span class="str">"hired"</span>:<span class="op">-1</span>}).<span class="fn">limit</span>(<span class="op">25</span>)`;
+  document.getElementById('expl').classList.add('on');
+  document.getElementById('eg').innerHTML=`<div class="ehero"><div class="ehero-lbl">Query Intent</div><div class="ehero-q">Show all employee records</div><div class="ehero-sub">Fetching documents from employees, sorted by hire date</div></div><div class="esteps"><div class="esteps-ttl">How this query works</div><div class="estep"><div class="enum">1</div><div class="ebody"><div class="ehead">Collection Scan</div><div class="edesc">Targets <span class="hl">employees</span> (1,240 docs)</div></div></div><div class="estep"><div class="enum">2</div><div class="ebody"><div class="ehead">No Filter</div><div class="edesc">Empty <span class="hl">{}</span> matches all documents</div></div></div><div class="estep"><div class="enum">3</div><div class="ebody"><div class="ehead">Sort + Limit</div><div class="edesc">Sorted by hire date, limited to <span class="hl">25</span></div></div></div></div><div class="efound"><div class="efound-ttl">Insights</div><div class="efound-txt">Found <span class="hl">1,240</span> employees across <span class="hl">6</span> departments. Average salary: <span class="hl">$74,300</span>.</div></div><div class="enext" style="grid-column:1/-1"><div class="enext-ttl">Try These</div><div class="ngrid"><div class="nbtn" onclick="sq('Top 5 highest paid');runQuery()">💰 Top 5 Earners</div><div class="nbtn" onclick="sq('Count by department');runQuery()">📊 Count by Dept</div><div class="nbtn" onclick="sq('Hired after 2020');runQuery()">📅 After 2020</div><div class="nbtn" onclick="sq('Average salary per dept');runQuery()">📈 Avg Salary</div></div></div>`;
+  document.getElementById('rs').classList.add('on');document.getElementById('rc').textContent='1,240 records';
+  document.getElementById('th').innerHTML='<tr><th>ID</th><th>Name</th><th>Department</th><th>Salary</th><th>Hired</th><th>Status</th></tr>';
+  document.getElementById('tb').innerHTML=EMP.map(e=>`<tr><td>${e.id}</td><td>${e.name}</td><td><span class="tdept">${e.dept}</span></td><td style="color:var(--ac)">$${e.salary.toLocaleString()}</td><td>${e.hired}</td><td><span class="${e.status==='Active'?'tact':'tina'}">${e.status}</span></td></tr>`).join('');
+  document.getElementById('cg').classList.add('on');
+  document.getElementById('lp').classList.add('on');
+  log('i','Source: employees collection (default)');log('i','Ready to query!');log('s','Dashboard loaded successfully');
+  setTimeout(()=>{drawDonut();drawLine()},120);
+}
+
+function runCollectionQuery(name,e){
+  if(e)e.stopPropagation();
+  document.querySelectorAll('.ci').forEach(c=>c.classList.remove('act'));
+  if(e&&e.target)e.target.closest('.ci')?.classList.add('act');
+  parsedData=null;activeFileIndex=-1;
+  switchSection('query-generator',document.querySelector('[data-section=query-generator]'));
+  document.getElementById('qi').value='Show all records';
+  document.getElementById('q-src').textContent='db.'+name;
+  document.getElementById('tb-coll').textContent=name;
+  setTimeout(()=>runQuery(),300);showToast('📁 Querying: '+name);
+}
+function setOperation(op,el){document.querySelectorAll('.ob').forEach(b=>b.classList.remove('act'));el.classList.add('act');showToast('⚙️ Operation: '+op+'()')}
+function insertMongoOp(op){switchSection('query-generator',document.querySelector('[data-section=query-generator]'));const qi=document.getElementById('qi');qi.value=op;qi.focus();showToast('📋 Inserted: '+op)}
+function sq(q){document.getElementById('qi').value=q}
+function clearQ(){document.getElementById('qi').value=''}
+function copyCode(){navigator.clipboard.writeText(document.getElementById('cd').innerText).catch(()=>{});showToast('📋 Copied!')}
+function exportJ(){if(!lastRes.length)return;const b=new Blob([JSON.stringify(lastRes,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='results.json';a.click();showToast('📥 JSON exported')}
+function exportCSV(){if(!lastRes.length)return;const keys=Object.keys(lastRes[0]);const csv=[keys.join(','),...lastRes.map(r=>keys.map(k=>JSON.stringify(r[k]??'')).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='results.csv';a.click();showToast('📥 CSV exported')}
+
+function showToast(msg){const t=document.createElement('div');t.className='toast';t.innerHTML='<span style="color:var(--ac);font-size:16px">✓</span>'+msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3300)}
+
+document.getElementById('qi').addEventListener('keydown',e=>{if(e.key==='Enter')runQuery()});
+const fontSelect = document.getElementById("fontSizeSelect");
+
+fontSelect.addEventListener("change", function () {
+    let size = this.value;
+
+    if (size === "small") {
+        document.body.style.fontSize = "12px";
+    }
+    else if (size === "medium") {
+        document.body.style.fontSize = "16px";
+    }
+    else if (size === "large") {
+        document.body.style.fontSize = "20px";
+    }
+});
+</script>
+</body>
+</html>
